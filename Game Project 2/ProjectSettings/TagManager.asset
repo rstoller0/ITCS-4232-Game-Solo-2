@@ -6,6 +6,7 @@ TagManager:
   tags:
   - isGroundedCheck
   - ground
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -16,9 +17,9 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
-  - 
-  - 
+  - Player
+  - Enemy
+  - Ground
   - 
   - 
   - 
