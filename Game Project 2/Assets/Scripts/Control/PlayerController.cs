@@ -124,12 +124,12 @@ public class PlayerController : MonoBehaviour
             //if (left mouse button OR F key is pressed) AND player is not currently waiting to attack AND player is grounded
             if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.F)) && !isWaitingToAttack && isGroundedCheck.isGrounded)
             {
-                //set attack trigger in animator to true
-                anim.SetTrigger("attack");
                 //set is attacking to true
                 isAttacking = true;
                 //set is waiting to attack to true
                 isWaitingToAttack = true;
+                //set attack trigger in animator to true
+                anim.SetTrigger("attack");
             }
             #endregion
 

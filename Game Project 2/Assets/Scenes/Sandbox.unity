@@ -331,6 +331,7 @@ GameObject:
   - component: {fileID: 295277724}
   - component: {fileID: 295277723}
   - component: {fileID: 295277722}
+  - component: {fileID: 295277729}
   m_Layer: 10
   m_Name: Skeleton (1)
   m_TagString: Enemy
@@ -451,6 +452,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &295277729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 295277721}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e7b8745a071a4144ab46064fc618fcf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTransform: {fileID: 392876195}
+  detectionDistance: 3.5
+  attackRange: 0.3
+  attackDamage: 10
+  skeletonSpeed: 1.5
+  currentSpeed: 0
+  jumpForce: 5
+  fallMultiplier: 2.5
+  lowJumpMultiplier: 2
+  isGroundedCheck: {fileID: 364327341}
 --- !u!1 &364327340
 GameObject:
   m_ObjectHideFlags: 0

@@ -156,12 +156,12 @@ public class SkeletonController : MonoBehaviour
             //if skeleton is in attacking range AND is not currently waiting to attack AND skeleton is grounded 
             if (inAttackRange && !isWaitingToAttack && isGroundedCheck.isGrounded)
             {
-                //set attack trigger in animator to true
-                anim.SetTrigger("attack");
                 //set is attacking to true
                 isAttacking = true;
                 //set is waiting to attack to true
                 isWaitingToAttack = true;
+                //set attack trigger in animator to true
+                anim.SetTrigger("attack");
             }
             #endregion
 
