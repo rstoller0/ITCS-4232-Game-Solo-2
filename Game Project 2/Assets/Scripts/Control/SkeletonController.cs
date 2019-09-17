@@ -17,6 +17,8 @@ public class SkeletonController : MonoBehaviour
     private bool inAttackRange = false;
     private bool isAttacking = false;
     private bool isWaitingToAttack = false;
+    private bool isStaggered = false;
+    private float staggerTimer = 0;
     private Health healthScript;
 
     //movement variables
@@ -81,133 +83,154 @@ public class SkeletonController : MonoBehaviour
         //if health is not 0 (skeleton is not dead), then allow movement and control to the AI
         if (healthScript.GetHealth() > 0)
         {
-            //movement code
-            #region
-            //get the direction the skeleton needs to move to get to the player
-            //set target Y axis of target position to 0 (so no flying)
-            axisInputs = (playerTransform.position - transform.position).normalized;
-
-            //log current distance
-            //Debug.Log(Vector3.Distance(playerTransform.position, transform.position));
-
-            //if the player is within the skeletons detection distance
-            if (Vector3.Distance(playerTransform.position, transform.position) < detectionDistance && !isAttacking)
+            //if not staggered then allow all movement and combat
+            if (!isStaggered)
             {
-                //if skeleton is within attack range on the X axis AND is not waiting to attack again
-                if (Mathf.Abs(playerTransform.position.x - transform.position.x) < attackRange && !isWaitingToAttack)
-                {
-                    //remove X axis inputs
-                    axisInputs = new Vector3(0, axisInputs.y, axisInputs.z);
+                //movement code
+                #region
+                //get the direction the skeleton needs to move to get to the player
+                //set target Y axis of target position to 0 (so no flying)
+                axisInputs = (playerTransform.position - transform.position).normalized;
 
-                }//else if the skeleton is waiting to attack
-                else if (isWaitingToAttack)
+                //log current distance
+                //Debug.Log(Vector3.Distance(playerTransform.position, transform.position));
+
+                //if the player is within the skeletons detection distance
+                if (Vector3.Distance(playerTransform.position, transform.position) < detectionDistance && !isAttacking)
                 {
-                    //run away from player at 75% speed
-                    axisInputs = new Vector3(-axisInputs.x * 0.75f, axisInputs.y, -axisInputs.z * 0.75f);
+                    //if skeleton is within attack range on the X axis AND is not waiting to attack again
+                    if (Mathf.Abs(playerTransform.position.x - transform.position.x) < attackRange /*&& !isWaitingToAttack*/)
+                    {
+                        //remove X axis inputs
+                        axisInputs = new Vector3(0, axisInputs.y, axisInputs.z);
+
+                    }//else if the skeleton is waiting to attack
+                    else if (isWaitingToAttack)
+                    {
+                        //run away from player at 75% speed
+                        axisInputs = new Vector3(-axisInputs.x * 0.75f, axisInputs.y, -axisInputs.z * 0.75f);
+                    }
+
+                    //if the skeleton is not currently moving at max speed (IF STATEMENT NOT NEEDED???) [max speed variable]
+                    //if (currentSpeed < maxSpeed)
+                    //{
+                    //move skeleton on X and Z axis based on inputs and keep the movement on Y axis as is
+                    //Debug.Log(axisInputs);
+                    rb.velocity = new Vector3(axisInputs.x * skeletonSpeed, rb.velocity.y, axisInputs.z * skeletonSpeed);
+                    //}
+                }
+                #endregion
+
+                //update current speed every frame
+                currentSpeed = rb.velocity.magnitude;
+
+                //update animator's speed variable to currentSpeed
+                anim.SetFloat("speed", currentSpeed);
+
+                //sprite direction determination
+                #region
+                //if moving right
+                if (rb.velocity.x > 0)
+                {
+                    //set x flip to false (face right)
+                    sr.flipX = false;
+                    facingRight = true;
+                }//else if moving left
+                else if (rb.velocity.x < 0)
+                {
+                    //set x flip to true (face left)
+                    sr.flipX = true;
+                    facingRight = false;
+                }
+                #endregion
+
+                //skeleton combat code
+                #region
+                //if skeleton is within attack range on the X axis AND within 0.1f on the Z axis
+                if (Mathf.Abs(playerTransform.position.x - transform.position.x) < attackRange && Mathf.Abs(playerTransform.position.z - transform.position.z) < 0.1f)
+                {
+                    //set in attack range to true
+                    inAttackRange = true;
+                }
+                else
+                { //else the skeleton is not close enough to player OR not aligned with player to attack
+                  //set in attack range to true
+                    inAttackRange = false;
                 }
 
-                //if the skeleton is not currently moving at max speed (IF STATEMENT NOT NEEDED???) [max speed variable]
-                //if (currentSpeed < maxSpeed)
-                //{
-                //move skeleton on X and Z axis based on inputs and keep the movement on Y axis as is
-                //Debug.Log(axisInputs);
-                rb.velocity = new Vector3(axisInputs.x * skeletonSpeed, rb.velocity.y, axisInputs.z * skeletonSpeed);
-                //}
-            }
-            #endregion
-
-            //update current speed every frame
-            currentSpeed = rb.velocity.magnitude;
-
-            //update animator's speed variable to currentSpeed
-            anim.SetFloat("speed", currentSpeed);
-
-            //sprite direction determination
-            #region
-            //if moving right
-            if (rb.velocity.x > 0)
-            {
-                //set x flip to false (face right)
-                sr.flipX = false;
-                facingRight = true;
-            }//else if moving left
-            else if (rb.velocity.x < 0)
-            {
-                //set x flip to true (face left)
-                sr.flipX = true;
-                facingRight = false;
-            }
-            #endregion
-
-            //skeleton combat code
-            #region
-            //if skeleton is within attack range on the X axis AND within 0.1f on the Z axis
-            if (Mathf.Abs(playerTransform.position.x - transform.position.x) < attackRange && Mathf.Abs(playerTransform.position.z - transform.position.z) < 0.1f)
-            {
-                //set in attack range to true
-                inAttackRange = true;
-            }
-            else
-            { //else the skeleton is not close enough to player OR not aligned with player to attack
-                //set in attack range to true
-                inAttackRange = false;
-            }
-
-            //if skeleton is in attacking range AND is not currently waiting to attack AND skeleton is grounded 
-            if (inAttackRange && !isWaitingToAttack && isGroundedCheck.isGrounded)
-            {
-                //set is attacking to true
-                isAttacking = true;
-                //set is waiting to attack to true
-                isWaitingToAttack = true;
-                //set attack trigger in animator to true
-                anim.SetTrigger("attack");
-            }
-            #endregion
-
-            //jump code (skeleton code)
-            #region
-            //if jump is on cooldown
-            if (currentJumpCooldown > 0)
-            {
-                //pick the bigger of cooldown left - time AND 0
-                currentJumpCooldown = Mathf.Max(currentJumpCooldown - Time.deltaTime, 0);
-            }
-
-            //if skeleton is not grounded
-            if (!isGroundedCheck.isGrounded)
-            {
-                //set skeleton's grounded animator variable to false
-                anim.SetBool("isGrounded", false);
-
-                //AND if the skeleton is falling
-                if (rb.velocity.y < 0)
+                //if skeleton is in attacking range AND is not currently waiting to attack AND skeleton is grounded 
+                if (inAttackRange && !isWaitingToAttack && isGroundedCheck.isGrounded)
                 {
-                    //amplify the skeleton's fall speed over time
-                    rb.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
-                } //else if the skeleton is traveling upward AND no longer holding spacebar
-                else if (rb.velocity.y > 0 && !Input.GetKey(KeyCode.Space))
-                {
-                    //apply the lowJumpMultiplier to the skeletons Y velocity
-                    rb.velocity += Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
+                    //set is attacking to true
+                    isAttacking = true;
+                    //set is waiting to attack to true
+                    isWaitingToAttack = true;
+                    //set attack trigger in animator to true
+                    anim.SetTrigger("attack");
                 }
-            }//else the skeleton is grounded
-            else
-            {
-                //set skeleton's grounded animator variable to false
+                #endregion
+
+                //jump code (skeleton code) [REMOVE?] (anim set is required without jump code, but will remove jump animation if removing the code)
                 anim.SetBool("isGrounded", true);
-
-                //AND if the skeleton is within attack range of player AND the player is above the skeleton AND jump is off cooldown AND skeleton is not attacking
-                //THIS IS JUST MIMICING PRETTY MUCH [THIS WHOLE SCRIPT IS JUST MIMICING PRETTY MUCH]
-                if (inAttackRange && (playerTransform.position.y - transform.position.y) > 0.5f && currentJumpCooldown == 0 && !isAttacking)
+                #region
+                /*
+                //if jump is on cooldown
+                if (currentJumpCooldown > 0)
                 {
-                    //apply force for jump
-                    rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-                    //set jump to be on cooldown (this is to stop enemy from applying this force more than once each jump)
-                    currentJumpCooldown = jumpCooldown;
+                    //pick the bigger of cooldown left - time AND 0
+                    currentJumpCooldown = Mathf.Max(currentJumpCooldown - Time.deltaTime, 0);
+                }
+
+                //if skeleton is not grounded
+                if (!isGroundedCheck.isGrounded)
+                {
+                    //set skeleton's grounded animator variable to false
+                    anim.SetBool("isGrounded", false);
+
+                    //AND if the skeleton is falling
+                    if (rb.velocity.y < 0)
+                    {
+                        //amplify the skeleton's fall speed over time
+                        rb.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
+                    } //else if the skeleton is traveling upward AND no longer holding spacebar
+                    else if (rb.velocity.y > 0 && !Input.GetKey(KeyCode.Space))
+                    {
+                        //apply the lowJumpMultiplier to the skeletons Y velocity
+                        rb.velocity += Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
+                    }
+                }//else the skeleton is grounded
+                else
+                {
+                    //set skeleton's grounded animator variable to false
+                    anim.SetBool("isGrounded", true);
+
+                    //AND if the skeleton is within attack range of player AND the player is above the skeleton AND jump is off cooldown AND skeleton is not attacking
+                    //THIS IS JUST MIMICING PRETTY MUCH [THIS WHOLE SCRIPT IS JUST MIMICING PRETTY MUCH]
+                    if (inAttackRange && (playerTransform.position.y - transform.position.y) > 0.5f && currentJumpCooldown == 0 && !isAttacking)
+                    {
+                        //apply force for jump
+                        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                        //set jump to be on cooldown (this is to stop enemy from applying this force more than once each jump)
+                        currentJumpCooldown = jumpCooldown;
+                    }
+                }
+                */
+                #endregion
+            }
+            else
+            {//is staggered
+                //if staggerTimer is still active
+                if (staggerTimer > 0)
+                {
+                    //lower timer
+                    staggerTimer = Mathf.Max(staggerTimer - Time.deltaTime, 0);
+                }
+                else
+                {//else not staggered anymore
+                    //set isStaggered to false
+                    isStaggered = false;
                 }
             }
-            #endregion
         }
         else
         { //else the skeleton is dead
@@ -220,6 +243,12 @@ public class SkeletonController : MonoBehaviour
             //OPTION 2
             Destroy(this.gameObject);
         }
+    }
+
+    public void Stagger(float timeToStagger)
+    {
+        isStaggered = true;
+        staggerTimer = timeToStagger;
     }
 
     private void FixedUpdate()
@@ -267,8 +296,9 @@ public class SkeletonController : MonoBehaviour
         //int layerMask3 = ~(layerMask1 | layerMask2);
 
         //set up variables for raycast detection of hitting enemies
-        RaycastHit hit;
+        //RaycastHit hit;
         Vector3 rayDir;
+        RaycastHit[] hits;
 
         //determine what direction the payer is facing to attack that direction
         //if facing right
@@ -283,6 +313,17 @@ public class SkeletonController : MonoBehaviour
             rayDir = -transform.right;
         }
 
+        hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, attackRange, layerMask1);
+
+        //can hit multiple players at once
+        foreach (RaycastHit hit in hits)
+        {
+            //do damage to that enemy
+            hit.transform.GetComponent<Health>().DoDamage(attackDamage);
+            //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
+        }
+
+        /*
         //if raycast hits an emeny
         if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, out hit, attackRange, layerMask1))
         {
@@ -290,6 +331,7 @@ public class SkeletonController : MonoBehaviour
             hit.transform.GetComponent<Health>().DoDamage(attackDamage);
             //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
         }
+        */
         #endregion
     }
 

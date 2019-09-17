@@ -133,8 +133,10 @@ public class PlayerController : MonoBehaviour
             }
             #endregion
 
-            //jump code
+            //jump code [REMOVE?] (anim set is required without jump code, but will remove jump animation if removing the code)
+            anim.SetBool("isGrounded", true);
             #region
+            /*
             //if player is not grounded
             if (!isGroundedCheck.isGrounded)
             {
@@ -165,6 +167,7 @@ public class PlayerController : MonoBehaviour
                     rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
                 }
             }
+            */
             #endregion
         }
         else
@@ -204,8 +207,9 @@ public class PlayerController : MonoBehaviour
         //int layerMask3 = ~(layerMask1 | layerMask2);
 
         //set up variables for raycast detection of hitting enemies
-        RaycastHit hit;
+        //RaycastHit hit;
         Vector3 rayDir;
+        RaycastHit[] hits;
 
         //determine what direction the payer is facing to attack that direction
         //if facing right
@@ -220,6 +224,21 @@ public class PlayerController : MonoBehaviour
             rayDir = -transform.right;
         }
 
+        hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, attackRange, layerMask1);
+
+        //can hit multiple enemies at once
+        foreach (RaycastHit hit in hits)
+        {
+            //do damage to that enemy
+            hit.transform.GetComponent<Health>().DoDamage(attackDamage);
+
+            //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
+            //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
+            hit.transform.GetComponent<SkeletonController>().Stagger(1);
+            //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
+        }
+
+        /*
         //if raycast hits an emeny
         if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, out hit, attackRange, layerMask1))
         {
@@ -227,6 +246,7 @@ public class PlayerController : MonoBehaviour
             hit.transform.GetComponent<Health>().DoDamage(attackDamage);
             //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
         }
+        */
         #endregion
     }
 
