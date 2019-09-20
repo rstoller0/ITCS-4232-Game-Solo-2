@@ -26,7 +26,6 @@ public class PlayerController : MonoBehaviour
     [Range(0, 10)] [SerializeField] float jumpForce = 5;
     [SerializeField] float fallMultiplier = 2.5f;
     [SerializeField] float lowJumpMultiplier = 2;
-    [SerializeField] private IsGroundedCheck isGroundedCheck;
 
     //visiual variables
     private Animator anim;
@@ -121,8 +120,8 @@ public class PlayerController : MonoBehaviour
 
             //combat code
             #region
-            //if (left mouse button OR F key is pressed) AND player is not currently waiting to attack AND player is grounded
-            if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.F)) && !isWaitingToAttack && isGroundedCheck.isGrounded)
+            //if (left mouse button OR F key is pressed) AND player is not currently waiting to attack
+            if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) && !isWaitingToAttack)
             {
                 //set is attacking to true
                 isAttacking = true;
@@ -131,43 +130,6 @@ public class PlayerController : MonoBehaviour
                 //set attack trigger in animator to true
                 anim.SetTrigger("attack");
             }
-            #endregion
-
-            //jump code [REMOVE?] (anim set is required without jump code, but will remove jump animation if removing the code)
-            anim.SetBool("isGrounded", true);
-            #region
-            /*
-            //if player is not grounded
-            if (!isGroundedCheck.isGrounded)
-            {
-                //set player's grounded animator variable to false
-                anim.SetBool("isGrounded", false);
-
-                //AND if the player is falling
-                if (rb.velocity.y < 0)
-                {
-                    //amplify the player's fall speed over time
-                    rb.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
-                } //else if the player is traveling upward AND no longer holding spacebar
-                else if (rb.velocity.y > 0 && !Input.GetKey(KeyCode.Space))
-                {
-                    //apply the lowJumpMultiplier to the players Y velocity
-                    rb.velocity += Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
-                }
-            }//else the player is grounded
-            else
-            {
-                //set player's grounded animator variable to false
-                anim.SetBool("isGrounded", true);
-
-                //AND if the player presses spacebar (jump button) AND player is not attacking
-                if (Input.GetKeyDown(KeyCode.Space) && !isAttacking)
-                {
-                    //apply force for jump
-                    rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-                }
-            }
-            */
             #endregion
         }
         else
@@ -237,16 +199,6 @@ public class PlayerController : MonoBehaviour
             hit.transform.GetComponent<SkeletonController>().Stagger(1);
             //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
         }
-
-        /*
-        //if raycast hits an emeny
-        if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, out hit, attackRange, layerMask1))
-        {
-            //do damage to that enemy
-            hit.transform.GetComponent<Health>().DoDamage(attackDamage);
-            //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
-        }
-        */
         #endregion
     }
 
