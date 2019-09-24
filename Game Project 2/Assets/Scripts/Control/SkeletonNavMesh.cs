@@ -7,10 +7,11 @@ using UnityEngine.AI;
 
 public class SkeletonNavMesh : MonoBehaviour
 {
+    //player variable
     [SerializeField] Transform target;
 
+    //skeleton movement/location variables
     NavMeshAgent navMeshAgent;
-
     Rigidbody rb;
 
     //visual variables
@@ -22,20 +23,26 @@ public class SkeletonNavMesh : MonoBehaviour
     [Range(0, 7)] [SerializeField] private float detectionDistance;
     [SerializeField] private float attackRange = 0.4f;
     [SerializeField] private float attackDamage = 10;
+    [Tooltip("Time between attacks (Lower means faster attack speed)")]
+    [Range(0, 5)] [SerializeField] private float timeBetweenAttacks = 3;
     private bool inAttackRange = false;
+    private float attackCooldown = 0;
     private bool isAttacking = false;
     private bool isWaitingToAttack = false;
     private bool isStaggered = false;
-    private float staggerTimer = 0;
     private Health healthScript;
 
+    //variable for desired location for the skeleton to move to
     private Vector3 targetVector;
 
     private void Start()
     {
         //get the nav mesh agent at start and store it in the variable
         navMeshAgent = GetComponent<NavMeshAgent>();
+        //stop the enemy from rotating as they move on the navmesh
         navMeshAgent.updateRotation = false;
+        //randomly increase/decrease the enemies movement slightly, to add variety to the enemy type
+        navMeshAgent.speed += Random.Range(-0.25f, 0.25f);
         rb = GetComponent<Rigidbody>();
 
         //get skeleton's animator at start
@@ -51,6 +58,13 @@ public class SkeletonNavMesh : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //to limit attack speed and allow movement after attack animation finishes but not allow to attack yet
+        if(attackCooldown > 0)
+        {
+            //if the attack cooldown is still above 0 count down
+            attackCooldown = Mathf.Max(attackCooldown - Time.deltaTime, 0);
+        }
+
         //if health is not 0 (skeleton is not dead), then allow movement and control to the AI
         if (healthScript.GetHealth() > 0)
         {
@@ -96,13 +110,13 @@ public class SkeletonNavMesh : MonoBehaviour
                 {
                     //set x flip to false (face right)
                     sr.flipX = false;
-                    //facingRight = true;
+                    facingRight = true;
                 }//else if moving left OR if the player is to the left of the skeleton
                 else if (navMeshAgent.velocity.x < 0 || target.position.x - transform.position.x < 0)
                 {
                     //set x flip to true (face left)
                     sr.flipX = true;
-                    //facingRight = false;
+                    facingRight = false;
                 }
                 #endregion
 
@@ -120,31 +134,17 @@ public class SkeletonNavMesh : MonoBehaviour
                     inAttackRange = false;
                 }
 
-                //if skeleton is in attacking range AND is not currently waiting to attack
-                if (inAttackRange && !isWaitingToAttack)
+                //if skeleton is in attacking range AND is able to attack again (cooldown is at 0)
+                if (inAttackRange && attackCooldown == 0)
                 {
                     //set is attacking to true
                     isAttacking = true;
-                    //set is waiting to attack to true
-                    isWaitingToAttack = true;
+                    //set attack cooldown
+                    attackCooldown = timeBetweenAttacks;
                     //set attack trigger in animator to true
                     anim.SetTrigger("attack");
                 }
                 #endregion
-            }
-            else
-            {//is staggered
-                //if staggerTimer is still active
-                if (staggerTimer > 0)
-                {
-                    //lower timer
-                    staggerTimer = Mathf.Max(staggerTimer - Time.deltaTime, 0);
-                }
-                else
-                {//else not staggered anymore
-                    //set isStaggered to false
-                    isStaggered = false;
-                }
             }
         }
         else
@@ -158,6 +158,20 @@ public class SkeletonNavMesh : MonoBehaviour
             //OPTION 2
             Destroy(this.gameObject);
         }
+    }
+
+    //movement functions (update animator speed function)
+    #region
+    private void UpdateAnimator()
+    {
+        //set velocity to global velocity
+        //Vector3 velocity = navMeshAgent.velocity;
+        //set localVelocity to local velocity from the global velocity
+        //Vector3 localVelocity = transform.InverseTransformDirection(velocity);
+        //set speed to the forward movement of local velocity
+        float speed = navMeshAgent.velocity.magnitude;
+        //set animator's variable to current speed
+        anim.SetFloat("speed", speed);
     }
 
     public void StartMoveAction(Vector3 destination)
@@ -181,18 +195,30 @@ public class SkeletonNavMesh : MonoBehaviour
         //stop the NavMeshAgent
         navMeshAgent.isStopped = true;
     }
+    #endregion
 
-    private void UpdateAnimator()
+    //stagger functions
+    #region
+    public void Stagger()
     {
-        //set velocity to global velocity
-        //Vector3 velocity = navMeshAgent.velocity;
-        //set localVelocity to local velocity from the global velocity
-        //Vector3 localVelocity = transform.InverseTransformDirection(velocity);
-        //set speed to the forward movement of local velocity
-        float speed = navMeshAgent.velocity.magnitude;
-        //set animator's variable to current speed
-        anim.SetFloat("speed", speed);
+        //set is staggered to true and trigger the animation
+        isStaggered = true;
+        anim.SetTrigger("stagger");
     }
+
+    public void StopStagger()
+    {
+        //set is staggered to false
+        isStaggered = false;
+
+        //safegaurds to allow for movement and attacking shortly after being staggered...
+        //this allows the player to move after being staggered during the attack animation
+        //and sets the attack cooldown to a short duration [it might have been set to a high number]...
+        //this ensure that the player is not unable to attck for a long time after coming out of a stagger...
+        isAttacking = false;
+        attackCooldown = 0.25f;
+    }
+    #endregion
 
     //attack animation events
     #region
@@ -233,34 +259,20 @@ public class SkeletonNavMesh : MonoBehaviour
         {
             //do damage to that enemy
             hit.transform.GetComponent<Health>().DoDamage(attackDamage);
-            //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
-        }
 
-        /*
-        //if raycast hits an emeny
-        if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, out hit, attackRange, layerMask1))
-        {
-            //do damage to that enemy
-            hit.transform.GetComponent<Health>().DoDamage(attackDamage);
+            //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
+            //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
+            hit.transform.GetComponent<PlayerController>().Stagger();
             //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
         }
-        */
         #endregion
     }
 
-    //setting isWaitingToAttacking to false after attack cooldown time to allow for new attack [For Skeleton_Attack, attackCooldown is set to 2f]
-    private void StoppingAttack(float attackCooldown)
+    //setting isAttacking to false
+    private void StopAttack()
     {
-        //set is attacking to false, enemy is not attacking anymore, but needs to wait to attack again
+        //set is attacking to false (this allows the player to move after the attack animation but before the player can attack again)
         isAttacking = false;
-        //attackCooldown is set within the animation (Skeleton_Attack animation)
-        Invoke("AttackStopped", attackCooldown);
-    }
-
-    private void AttackStopped()
-    {
-        //set isWaitingToAttacking to false to allow for another attack
-        isWaitingToAttack = false;
     }
     #endregion
 }
