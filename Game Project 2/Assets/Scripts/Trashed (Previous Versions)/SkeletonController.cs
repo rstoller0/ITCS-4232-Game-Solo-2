@@ -26,12 +26,12 @@ public class SkeletonController : MonoBehaviour
     [Range(0, 5)] [SerializeField] private float skeletonSpeed = 1.5f;
     //[SerializeField] float maxSpeed = 3; //(IF STATEMENT NOT NEEDED???) [movement code]
     [SerializeField] private float currentSpeed = 0;
-    [Range(1, 10)] [SerializeField] private float jumpForce = 5; //jump code (skeleton code)
-    private float currentJumpCooldown = 0; //jump code (skeleton code)
-    private float jumpCooldown = 1; //jump code (skeleton code)
+    [Range(1, 10)] [SerializeField] private float jumpForce = 5; //jump code (ninja code)
+    private float currentJumpCooldown = 0; //jump code (ninja code)
+    private float jumpCooldown = 1; //jump code (ninja code)
     [SerializeField] private float fallMultiplier = 2.5f; //jump code (player code)
     [SerializeField] private float lowJumpMultiplier = 2; //jump code (player code)
-    [SerializeField] private IsGroundedCheck isGroundedCheck; //jump code (skeleton code)
+    [SerializeField] private IsGroundedCheck isGroundedCheck; //jump code (ninja code)
 
     //visual variables
     private Animator anim;
@@ -46,23 +46,23 @@ public class SkeletonController : MonoBehaviour
 
     private void Start()
     {
-        //get skeleton's rigidbody at start
+        //get ninja's rigidbody at start
         rb = GetComponent<Rigidbody>();
 
-        //get skeleton's animator at start
+        //get ninja's animator at start
         anim = GetComponent<Animator>();
 
-        //get skeleton's sprite renderer at start
+        //get ninja's sprite renderer at start
         sr = GetComponentInChildren<SpriteRenderer>();
 
-        //get skeleton's health script at start
+        //get ninja's health script at start
         healthScript = GetComponent<Health>();
     }
 
     private void Update()
     {
         //This will need to be adjusted for interrupting attacks... (i.e. if the player staggers the enemy in their attack animation, they would be stuck in isAttacking/isWaitingToAttack forever
-        //if the skeleton is attacking OR waiting to attack
+        //if the ninja is attacking OR waiting to attack
         if (isAttacking || isWaitingToAttack)
         {
             //increment stuckInAttackTimer by the time that passes
@@ -80,7 +80,7 @@ public class SkeletonController : MonoBehaviour
             }
         }
 
-        //if health is not 0 (skeleton is not dead), then allow movement and control to the AI
+        //if health is not 0 (ninja is not dead), then allow movement and control to the AI
         if (healthScript.GetHealth() > 0)
         {
             //if not staggered then allow all movement and combat
@@ -88,7 +88,7 @@ public class SkeletonController : MonoBehaviour
             {
                 //movement code
                 #region
-                //get the direction the skeleton needs to move to get to the player
+                //get the direction the ninja needs to move to get to the player
                 //set target Y axis of target position to 0 (so no flying)
                 axisInputs = (playerTransform.position - transform.position).normalized;
 
@@ -98,23 +98,23 @@ public class SkeletonController : MonoBehaviour
                 //if the player is within the skeletons detection distance
                 if (Vector3.Distance(playerTransform.position, transform.position) < detectionDistance && !isAttacking)
                 {
-                    //if skeleton is within attack range on the X axis AND is not waiting to attack again
+                    //if ninja is within attack range on the X axis AND is not waiting to attack again
                     if (Mathf.Abs(playerTransform.position.x - transform.position.x) < attackRange /*&& !isWaitingToAttack*/)
                     {
                         //remove X axis inputs
                         axisInputs = new Vector3(0, axisInputs.y, axisInputs.z);
 
-                    }//else if the skeleton is waiting to attack
+                    }//else if the ninja is waiting to attack
                     else if (isWaitingToAttack)
                     {
                         //run away from player at 75% speed
                         axisInputs = new Vector3(-axisInputs.x * 0.75f, axisInputs.y, -axisInputs.z * 0.75f);
                     }
 
-                    //if the skeleton is not currently moving at max speed (IF STATEMENT NOT NEEDED???) [max speed variable]
+                    //if the ninja is not currently moving at max speed (IF STATEMENT NOT NEEDED???) [max speed variable]
                     //if (currentSpeed < maxSpeed)
                     //{
-                    //move skeleton on X and Z axis based on inputs and keep the movement on Y axis as is
+                    //move ninja on X and Z axis based on inputs and keep the movement on Y axis as is
                     //Debug.Log(axisInputs);
                     rb.velocity = new Vector3(axisInputs.x * skeletonSpeed, rb.velocity.y, axisInputs.z * skeletonSpeed);
                     //}
@@ -144,21 +144,21 @@ public class SkeletonController : MonoBehaviour
                 }
                 #endregion
 
-                //skeleton combat code
+                //ninja combat code
                 #region
-                //if skeleton is within attack range on the X axis AND within 0.1f on the Z axis
+                //if ninja is within attack range on the X axis AND within 0.1f on the Z axis
                 if (Mathf.Abs(playerTransform.position.x - transform.position.x) < attackRange && Mathf.Abs(playerTransform.position.z - transform.position.z) < 0.1f)
                 {
                     //set in attack range to true
                     inAttackRange = true;
                 }
                 else
-                { //else the skeleton is not close enough to player OR not aligned with player to attack
+                { //else the ninja is not close enough to player OR not aligned with player to attack
                   //set in attack range to true
                     inAttackRange = false;
                 }
 
-                //if skeleton is in attacking range AND is not currently waiting to attack AND skeleton is grounded 
+                //if ninja is in attacking range AND is not currently waiting to attack AND ninja is grounded 
                 if (inAttackRange && !isWaitingToAttack && isGroundedCheck.isGrounded)
                 {
                     //set is attacking to true
@@ -170,7 +170,7 @@ public class SkeletonController : MonoBehaviour
                 }
                 #endregion
 
-                //jump code (skeleton code) [REMOVE?] (anim set is required without jump code, but will remove jump animation if removing the code)
+                //jump code (ninja code) [REMOVE?] (anim set is required without jump code, but will remove jump animation if removing the code)
                 anim.SetBool("isGrounded", true);
                 #region
                 /*
@@ -181,30 +181,30 @@ public class SkeletonController : MonoBehaviour
                     currentJumpCooldown = Mathf.Max(currentJumpCooldown - Time.deltaTime, 0);
                 }
 
-                //if skeleton is not grounded
+                //if ninja is not grounded
                 if (!isGroundedCheck.isGrounded)
                 {
-                    //set skeleton's grounded animator variable to false
+                    //set ninja's grounded animator variable to false
                     anim.SetBool("isGrounded", false);
 
-                    //AND if the skeleton is falling
+                    //AND if the ninja is falling
                     if (rb.velocity.y < 0)
                     {
-                        //amplify the skeleton's fall speed over time
+                        //amplify the ninja's fall speed over time
                         rb.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
-                    } //else if the skeleton is traveling upward AND no longer holding spacebar
+                    } //else if the ninja is traveling upward AND no longer holding spacebar
                     else if (rb.velocity.y > 0 && !Input.GetKey(KeyCode.Space))
                     {
                         //apply the lowJumpMultiplier to the skeletons Y velocity
                         rb.velocity += Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
                     }
-                }//else the skeleton is grounded
+                }//else the ninja is grounded
                 else
                 {
-                    //set skeleton's grounded animator variable to false
+                    //set ninja's grounded animator variable to false
                     anim.SetBool("isGrounded", true);
 
-                    //AND if the skeleton is within attack range of player AND the player is above the skeleton AND jump is off cooldown AND skeleton is not attacking
+                    //AND if the ninja is within attack range of player AND the player is above the ninja AND jump is off cooldown AND ninja is not attacking
                     //THIS IS JUST MIMICING PRETTY MUCH [THIS WHOLE SCRIPT IS JUST MIMICING PRETTY MUCH]
                     if (inAttackRange && (playerTransform.position.y - transform.position.y) > 0.5f && currentJumpCooldown == 0 && !isAttacking)
                     {
@@ -233,7 +233,7 @@ public class SkeletonController : MonoBehaviour
             }
         }
         else
-        { //else the skeleton is dead
+        { //else the ninja is dead
 
             //OPTION 1
             //rb.useGravity = false;
@@ -262,7 +262,7 @@ public class SkeletonController : MonoBehaviour
         //if the player is within the skeletons detection distance
         if (Vector3.Distance(playerTransform.position, transform.position) < detectionDistance)
         {
-            //if skeleton is within attack range on the X axis
+            //if ninja is within attack range on the X axis
             if (Mathf.Abs(playerTransform.position.x - transform.position.x) < attackRange)
             {
                 //remove X axis inputs
@@ -270,7 +270,7 @@ public class SkeletonController : MonoBehaviour
                 //add force based on inputs
                 rb.AddForce(axisInputs * skeletonSpeed * Time.fixedDeltaTime, ForceMode.Impulse);
 
-            }//else not within attack range on the X axis AND if the skeleton is not currently moving at max speed
+            }//else not within attack range on the X axis AND if the ninja is not currently moving at max speed
             else if (currentSpeed < maxSpeed)
             {
                 //add force based on inputs

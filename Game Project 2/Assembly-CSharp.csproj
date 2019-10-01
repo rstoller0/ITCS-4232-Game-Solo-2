@@ -60,10 +60,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Control\DragonWarriorNavMesh.cs" />
     <Compile Include="Assets\Scripts\Control\FollowTargetArea.cs" />
     <Compile Include="Assets\Scripts\Control\Health.cs" />
+    <Compile Include="Assets\Scripts\Control\NinjaNavMesh.cs" />
     <Compile Include="Assets\Scripts\Control\PlayerController.cs" />
-    <Compile Include="Assets\Scripts\Control\SkeletonNavMesh.cs" />
+    <Compile Include="Assets\Scripts\Control\ProjectileMovement.cs" />
     <Compile Include="Assets\Scripts\Control\UpDownBoundries.cs" />
     <Compile Include="Assets\Scripts\Trashed (Previous Versions)\IsGroundedCheck.cs" />
     <Compile Include="Assets\Scripts\Trashed (Previous Versions)\PlayerController_OLD.cs" />

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1066091756168603464}
   - component: {fileID: 1066091756168603465}
   - component: {fileID: 1066091756168603470}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: Dragon_Warrior
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -48,7 +48,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.25, y: 0.5, z: 0.1}
+  m_Size: {x: 0.25, y: 0.5, z: 0.15}
   m_Center: {x: 0, y: 0.25, z: 0}
 --- !u!54 &1066091756168603466
 Rigidbody:
@@ -134,8 +134,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   detectionDistance: 2
-  attackRange: 0.4
+  attackRange: 1.5
   attackDamage: 10
+  attackProjectile: {fileID: 7753933686242053259, guid: 5df5560536d62484698acadb8e2e8049,
+    type: 3}
   timeBetweenAttacks: 3
 --- !u!1 &1066091756705673138
 GameObject:
@@ -147,7 +149,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1066091756705673149}
   - component: {fileID: 1066091756705673148}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: idle_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -162,7 +164,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1066091756705673138}
   m_LocalRotation: {x: 0.2588191, y: 0, z: 0, w: 0.9659258}
-  m_LocalPosition: {x: 0, y: 0.32, z: 0}
+  m_LocalPosition: {x: 0, y: 0.32, z: 0.06}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.1}
   m_Children: []
   m_Father: {fileID: 1066091756168603476}

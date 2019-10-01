@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
         //get player's sprite renderer at start
         sr = GetComponentInChildren<SpriteRenderer>();
 
-        //get skeleton's health script at start
+        //get ninja's health script at start
         healthScript = GetComponent<Health>();
     }
 
@@ -79,8 +79,9 @@ public class PlayerController : MonoBehaviour
             //{
             if (!isAttacking)
             {
-                //move player on X and Z axis based on inputs and keep the movement on Y axis as is
-                rb.velocity = new Vector3(axisInputs.x * playerSpeed, rb.velocity.y, axisInputs.z * playerSpeed);
+                //move player on X axis at full player speed and Z axis at half player speed (FOR MOVEMENT BALANCE) based on inputs and keep the movement on Y axis as is
+                //[REMEOVE (/ 2) IF NEED FASTER VERTICAL MOVEMENT]
+                rb.velocity = new Vector3(axisInputs.x * playerSpeed, rb.velocity.y, axisInputs.z * (playerSpeed / 2));
             }
             //}
             #endregion
@@ -159,9 +160,9 @@ public class PlayerController : MonoBehaviour
     private void Hit()
     {
         #region
-        //bit shift the index of the Enemy layer (10)
-        int layerMask1 = 1 << 10;
-        //int layerMask2 = 1 << 9;
+        //bit shift the index of the Enemy layer (12)
+        int layerMask1 = 1 << 12;
+        //int layerMask2 = 1 << 10;
 
         //this would cast rays only against colliders in layer 8 or against layer 9.
         //but instead we want to collide against everything except layer 8 and layer 9. The ~ operator does this, it inverts a bitmasks.
@@ -170,7 +171,11 @@ public class PlayerController : MonoBehaviour
         //set up variables for raycast detection of hitting enemies
         //RaycastHit hit;
         Vector3 rayDir;
+        //Vector3 rayDir2; //IF I WANT TO ADD MORE HIT WIDTH
+        //Vector3 rayDir3; //IF I WANT TO ADD MORE HIT WIDTH
         RaycastHit[] hits;
+        //RaycastHit[] hits2; //IF I WANT TO ADD MORE HIT WIDTH
+        //RaycastHit[] hits3; //IF I WANT TO ADD MORE HIT WIDTH
 
         //determine what direction the payer is facing to attack that direction
         //if facing right
@@ -178,25 +183,51 @@ public class PlayerController : MonoBehaviour
         {
             //set attack direction to right
             rayDir = transform.right;
+            //rayDir2 = transform.right + new Vector3(0, 0, 0.5f); //IF I WANT TO ADD MORE HIT WIDTH
+            //rayDir3 = transform.right + new Vector3(0, 0, -0.5f); //IF I WANT TO ADD MORE HIT WIDTH
         }
         else
         { //else the player is facing left
             //set attack direction to left
             rayDir = -transform.right;
+            //rayDir2 = -transform.right + new Vector3(0, 0, 0.5f); //IF I WANT TO ADD MORE HIT WIDTH
+            //rayDir3 = -transform.right + new Vector3(0, 0, -0.5f); //IF I WANT TO ADD MORE HIT WIDTH
         }
 
         hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, attackRange, layerMask1);
+        //hits2 = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir2, attackRange, layerMask1); //IF I WANT TO ADD MORE HIT WIDTH
+        //hits3 = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir3, attackRange, layerMask1); //IF I WANT TO ADD MORE HIT WIDTH
 
         //can hit multiple enemies at once
         foreach (RaycastHit hit in hits)
         {
-            //do damage to that enemy
-            hit.transform.GetComponent<Health>().DoDamage(attackDamage);
+            if (hit.transform.tag == "Enemy")
+            {
+                if (hit.transform.GetComponent<DragonWarriorNavMesh>() != null)
+                {
+                    //do damage to that enemy
+                    hit.transform.GetComponent<Health>().DoDamage(attackDamage);
 
-            //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
-            //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
-            hit.transform.GetComponent<SkeletonNavMesh>().Stagger();
-            //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
+                    //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
+                    //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
+                    hit.transform.GetComponent<DragonWarriorNavMesh>().Stagger();
+                    //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
+                    //Debug.DrawRay(transform.position, rayDir2 * 0.4f, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+                    //Debug.DrawRay(transform.position, rayDir3 * 0.4f, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+                }
+                else if (hit.transform.GetComponent<NinjaNavMesh>() != null)
+                {
+                    //do damage to that enemy
+                    hit.transform.GetComponent<Health>().DoDamage(attackDamage);
+
+                    //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
+                    //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
+                    hit.transform.GetComponent<NinjaNavMesh>().Stagger();
+                    //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
+                    //Debug.DrawRay(transform.position, rayDir2 * 0.4f, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+                    //Debug.DrawRay(transform.position, rayDir3 * 0.4f, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+                }
+            }
         }
         #endregion
     }

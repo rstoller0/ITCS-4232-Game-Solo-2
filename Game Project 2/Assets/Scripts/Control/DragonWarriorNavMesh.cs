@@ -5,12 +5,11 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(Health))]
 
-public class SkeletonNavMesh : MonoBehaviour
+public class DragonWarriorNavMesh : MonoBehaviour
 {
     //player variable
     [SerializeField] Transform target;
-
-    //skeleton movement/location variables
+    //ninja movement/location variables
     NavMeshAgent navMeshAgent;
     Rigidbody rb;
 
@@ -21,8 +20,10 @@ public class SkeletonNavMesh : MonoBehaviour
 
     //range/combat variables
     [Range(0, 7)] [SerializeField] private float detectionDistance;
+    [SerializeField] private float upDownAttackRange = 0.3f;
     [SerializeField] private float attackRange = 0.4f;
     [SerializeField] private float attackDamage = 10;
+    [SerializeField] private GameObject attackProjectile;
     [Tooltip("Time between attacks (Lower means faster attack speed)")]
     [Range(0, 5)] [SerializeField] private float timeBetweenAttacks = 3;
     private bool inAttackRange = false;
@@ -32,7 +33,7 @@ public class SkeletonNavMesh : MonoBehaviour
     private bool isStaggered = false;
     private Health healthScript;
 
-    //variable for desired location for the skeleton to move to
+    //variable for desired location for the ninja to move to
     private Vector3 targetVector;
 
     private void Start()
@@ -45,13 +46,13 @@ public class SkeletonNavMesh : MonoBehaviour
         navMeshAgent.speed += Random.Range(-0.25f, 0.25f);
         rb = GetComponent<Rigidbody>();
 
-        //get skeleton's animator at start
+        //get dragonWarrior's animator at start
         anim = GetComponent<Animator>();
 
-        //get skeleton's sprite renderer at start
+        //get dragonWarrior's sprite renderer at start
         sr = GetComponentInChildren<SpriteRenderer>();
 
-        //get skeleton's health script at start
+        //get dragonWarrior's health script at start
         healthScript = GetComponent<Health>();
     }
 
@@ -65,7 +66,7 @@ public class SkeletonNavMesh : MonoBehaviour
             attackCooldown = Mathf.Max(attackCooldown - Time.deltaTime, 0);
         }
 
-        //if health is not 0 (skeleton is not dead), then allow movement and control to the AI
+        //if health is not 0 (dragonWarrior is not dead), then allow movement and control to the AI
         if (healthScript.GetHealth() > 0)
         {
             //if not staggered then allow all movement and combat
@@ -85,7 +86,7 @@ public class SkeletonNavMesh : MonoBehaviour
                 //if the player is within the skeletons detection distance
                 if (Vector3.Distance(target.position, transform.position) < detectionDistance && !isAttacking)
                 {
-                    //if skeleton is within attack range on the X axis AND is not waiting to attack again
+                    //if ninja is within attack range on the X axis AND is not waiting to attack again
                     if (Mathf.Abs(target.position.x - transform.position.x) < attackRange)
                     {
                         //remove X axis inputs
@@ -105,13 +106,13 @@ public class SkeletonNavMesh : MonoBehaviour
 
                 //sprite direction determination
                 #region
-                //if moving right OR if the player is to the right of the skeleton
+                //if moving right OR if the player is to the right of the ninja
                 if (navMeshAgent.velocity.x > 0 || target.position.x - transform.position.x > 0)
                 {
                     //set x flip to false (face right)
                     sr.flipX = false;
                     facingRight = true;
-                }//else if moving left OR if the player is to the left of the skeleton
+                }//else if moving left OR if the player is to the left of the ninja
                 else if (navMeshAgent.velocity.x < 0 || target.position.x - transform.position.x < 0)
                 {
                     //set x flip to true (face left)
@@ -120,21 +121,21 @@ public class SkeletonNavMesh : MonoBehaviour
                 }
                 #endregion
 
-                //skeleton combat code
+                //dragonWarrior combat code
                 #region
-                //if skeleton is within attack range on the X axis AND within 0.1f on the Z axis
-                if (Mathf.Abs(target.position.x - transform.position.x) < attackRange && Mathf.Abs(target.position.z - transform.position.z) < 0.1f)
+                //if ninja is within attack range on the X axis AND within 0.3f on the Z axis
+                if (Mathf.Abs(target.position.x - transform.position.x) < attackRange && Mathf.Abs(target.position.z - transform.position.z) < upDownAttackRange)
                 {
                     //set in attack range to true
                     inAttackRange = true;
                 }
                 else
-                { //else the skeleton is not close enough to player OR not aligned with player to attack
+                { //else the ninja is not close enough to player OR not aligned with player to attack
                   //set in attack range to true
                     inAttackRange = false;
                 }
 
-                //if skeleton is in attacking range AND is able to attack again (cooldown is at 0)
+                //if ninja is in attacking range AND is able to attack again (cooldown is at 0)
                 if (inAttackRange && attackCooldown == 0)
                 {
                     //set is attacking to true
@@ -148,7 +149,7 @@ public class SkeletonNavMesh : MonoBehaviour
             }
         }
         else
-        { //else the skeleton is dead
+        { //else the dragonWarrior is dead
 
             //OPTION 1
             //rb.useGravity = false;
@@ -227,8 +228,8 @@ public class SkeletonNavMesh : MonoBehaviour
     {
         #region
         //bit shift the index of the Player layer (10)
-        int layerMask1 = 1 << 9;
-        //int layerMask2 = 1 << 10;
+        int layerMask1 = 1 << 10;
+        //int layerMask2 = 1 << 12;
 
         //this would cast rays only against colliders in layer 8 or against layer 9.
         //but instead we want to collide against everything except layer 8 and layer 9. The ~ operator does this, it inverts a bitmasks.
@@ -237,7 +238,11 @@ public class SkeletonNavMesh : MonoBehaviour
         //set up variables for raycast detection of hitting enemies
         //RaycastHit hit;
         Vector3 rayDir;
+        //Vector3 rayDir2; //IF I WANT TO ADD MORE HIT WIDTH
+        //Vector3 rayDir3; //IF I WANT TO ADD MORE HIT WIDTH
         RaycastHit[] hits;
+        //RaycastHit[] hits2; //IF I WANT TO ADD MORE HIT WIDTH
+        //RaycastHit[] hits3; //IF I WANT TO ADD MORE HIT WIDTH
 
         //determine what direction the payer is facing to attack that direction
         //if facing right
@@ -245,27 +250,55 @@ public class SkeletonNavMesh : MonoBehaviour
         {
             //set attack direction to right
             rayDir = transform.right;
+            //rayDir2 = transform.right + new Vector3(0, 0, 0.5f); //IF I WANT TO ADD MORE HIT WIDTH
+            //rayDir3 = transform.right + new Vector3(0, 0, -0.5f); //IF I WANT TO ADD MORE HIT WIDTH
         }
         else
         { //else the player is facing left
             //set attack direction to left
             rayDir = -transform.right;
+            //rayDir2 = -transform.right + new Vector3(0, 0, 0.5f); //IF I WANT TO ADD MORE HIT WIDTH
+            //rayDir3 = -transform.right + new Vector3(0, 0, -0.5f); //IF I WANT TO ADD MORE HIT WIDTH
         }
 
         hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, attackRange, layerMask1);
+        //hits2 = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir2, attackRange, layerMask1); //IF I WANT TO ADD MORE HIT WIDTH
+        //hits3 = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir3, attackRange, layerMask1); //IF I WANT TO ADD MORE HIT WIDTH
 
         //can hit multiple players at once
         foreach (RaycastHit hit in hits)
         {
-            //do damage to that enemy
-            hit.transform.GetComponent<Health>().DoDamage(attackDamage);
+            if (hit.transform.tag == "Player")
+            {
+                //do damage to that enemy
+                hit.transform.GetComponent<Health>().DoDamage(attackDamage);
 
-            //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
-            //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
-            hit.transform.GetComponent<PlayerController>().Stagger();
-            //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
+                //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
+                //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
+                hit.transform.GetComponent<PlayerController>().Stagger();
+                //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
+                //Debug.DrawRay(transform.position, rayDir2 * 0.4f, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+                //Debug.DrawRay(transform.position, rayDir3 * 0.4f, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+            }
         }
         #endregion
+    }
+
+    //firing the ranged attack
+    private void FireProjectile()
+    {
+        //determine what direction the payer is facing to attack that direction
+        //if facing right
+        if (facingRight)
+        {
+            GameObject fireball = Instantiate(attackProjectile, transform.position + ((transform.up + transform.right) * 0.12f), Quaternion.LookRotation(transform.forward)) as GameObject;
+            fireball.transform.Rotate(30, 0, 0);
+        }
+        else
+        { //else the player is facing left
+            GameObject fireball = Instantiate(attackProjectile, transform.position + ((transform.up - transform.right) * 0.12f), Quaternion.LookRotation(-transform.forward)) as GameObject;
+            fireball.transform.Rotate(-30, 0, 0);
+        }
     }
 
     //setting isAttacking to false
