@@ -122,8 +122,8 @@ public class NinjaNavMesh : MonoBehaviour
 
                 //ninja combat code
                 #region
-                //if ninja is within attack range on the X axis AND within 0.1f on the Z axis
-                if (Mathf.Abs(target.position.x - transform.position.x) < attackRange && Mathf.Abs(target.position.z - transform.position.z) < upDownAttackRange)
+                //if ninja is within attack range on the X axis AND within 0.1f on the Z axis AND [[the player is only slightly moving forwards/backwards]]
+                if (Mathf.Abs(target.position.x - transform.position.x) < attackRange && Mathf.Abs(target.position.z - transform.position.z) < upDownAttackRange && Mathf.Abs(target.GetComponent<Rigidbody>().velocity.z) < 0.1f)
                 {
                     //set in attack range to true
                     inAttackRange = true;
@@ -242,6 +242,7 @@ public class NinjaNavMesh : MonoBehaviour
         RaycastHit[] hits;
         //RaycastHit[] hits2; //IF I WANT TO ADD MORE HIT WIDTH
         //RaycastHit[] hits3; //IF I WANT TO ADD MORE HIT WIDTH
+        Vector3 rayStartPosition;
 
         //determine what direction the payer is facing to attack that direction
         //if facing right
@@ -251,6 +252,9 @@ public class NinjaNavMesh : MonoBehaviour
             rayDir = transform.right;
             //rayDir2 = transform.right + new Vector3(0, 0, 0.5f); //IF I WANT TO ADD MORE HIT WIDTH
             //rayDir3 = transform.right + new Vector3(0, 0, -0.5f); //IF I WANT TO ADD MORE HIT WIDTH
+
+            //move the start of the ray to the left side of the player's collider (this is to avoid hits not registering if the enemy is right on the player)
+            rayStartPosition = new Vector3(transform.position.x - 0.125f, transform.position.y + 0.25f, transform.position.z);
         }
         else
         { //else the player is facing left
@@ -258,9 +262,14 @@ public class NinjaNavMesh : MonoBehaviour
             rayDir = -transform.right;
             //rayDir2 = -transform.right + new Vector3(0, 0, 0.5f); //IF I WANT TO ADD MORE HIT WIDTH
             //rayDir3 = -transform.right + new Vector3(0, 0, -0.5f); //IF I WANT TO ADD MORE HIT WIDTH
+
+            //move the start of the ray to the right side of the player's collider (this is to avoid hits not registering if the enemy is right on the player)
+            rayStartPosition = new Vector3(transform.position.x + 0.125f, transform.position.y + 0.25f, transform.position.z);
         }
 
-        hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, attackRange, layerMask1);
+        //Debug.DrawRay(rayStartPosition, rayDir * attackRange, Color.red, 50000);
+        hits = Physics.RaycastAll(rayStartPosition, rayDir, attackRange, layerMask1);
+        //hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, attackRange, layerMask1);
         //hits2 = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir2, attackRange, layerMask1); //IF I WANT TO ADD MORE HIT WIDTH
         //hits3 = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir3, attackRange, layerMask1); //IF I WANT TO ADD MORE HIT WIDTH
 
@@ -275,9 +284,9 @@ public class NinjaNavMesh : MonoBehaviour
                 //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
                 //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
                 hit.transform.GetComponent<PlayerController>().Stagger();
-                //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
-                //Debug.DrawRay(transform.position, rayDir2 * 0.4f, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
-                //Debug.DrawRay(transform.position, rayDir3 * 0.4f, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+                //Debug.DrawRay(transform.position, rayDir * attackRange, Color.red, 50000);
+                //Debug.DrawRay(transform.position, rayDir2 * attackRange, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+                //Debug.DrawRay(transform.position, rayDir3 * attackRange, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
             }
         }
         #endregion

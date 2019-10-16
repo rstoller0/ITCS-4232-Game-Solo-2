@@ -54,80 +54,88 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        //to limit attack speed and allow movement after attack animation finishes but not allow to attack yet
-        if (attackCooldown > 0)
+        //if the game is not paused
+        if (!GameManager.instance.isPaused)
         {
-            //if the attack cooldown is still above 0 count down
-            attackCooldown = Mathf.Max(attackCooldown - Time.deltaTime, 0);
-        }
+            //START OF UPDATE [INSIDE if (!GameManager.instance.isPaused)]
 
-        //if health is not 0 (player is not dead), then allow movement and control of character
-        if (healthScript.GetHealth() > 0)
-        {
-            //if not staggered then allow all movement and combat
-            if (!isStaggered)
+            //to limit attack speed and allow movement after attack animation finishes but not allow to attack yet
+            if (attackCooldown > 0)
             {
-                //movement code
-                #region
-                //FOR SOME REASON SOMTIMES WITH YOU PRESS HORIZONTAL AND VERTICAL KEYS AT THE SAME TIME, PLAYER DOES NOT MOVE
-                //horizontal in the X for right and left
-                //vertical in the Z for up and down (less speed for up and down movement)
-                axisInputs = (new Vector3(Input.GetAxis("Horizontal"), rb.velocity.y, Input.GetAxis("Vertical"))).normalized;
-
-            //if the player is not currently moving at max speed (IF STATEMENT NOT NEEDED ???) [max speed variable]
-            //if (currentSpeed < maxSpeed)
-            //{
-            if (!isAttacking)
-            {
-                //move player on X axis at full player speed and Z axis at half player speed (FOR MOVEMENT BALANCE) based on inputs and keep the movement on Y axis as is
-                //[REMEOVE (/ 2) IF NEED FASTER VERTICAL MOVEMENT]
-                rb.velocity = new Vector3(axisInputs.x * playerSpeed, rb.velocity.y, axisInputs.z * (playerSpeed / 2));
+                //if the attack cooldown is still above 0 count down
+                attackCooldown = Mathf.Max(attackCooldown - Time.deltaTime, 0);
             }
-            //}
-            #endregion
 
-                //update current speed every frame
-                currentSpeed = rb.velocity.magnitude;
-
-                //update animator's speed variable to currentSpeed
-                anim.SetFloat("speed", currentSpeed);
-
-                //sprite direction determination
-                #region
-                //if moving right
-                if (rb.velocity.x > 0)
+            //if health is not 0 (player is not dead), then allow movement and control of character
+            if (healthScript.GetHealth() > 0)
+            {
+                //if not staggered then allow all movement and combat
+                if (!isStaggered)
                 {
-                    //set x flip to false (face right)
-                    sr.flipX = false;
-                    facingRight = true;
-                }//else if moving left
-                else if (rb.velocity.x < 0)
-                {
-                    //set x flip to true (face left)
-                    sr.flipX = true;
-                    facingRight = false;
-                }
-                #endregion
+                    //movement code
+                    #region
+                    //FOR SOME REASON SOMTIMES WITH YOU PRESS HORIZONTAL AND VERTICAL KEYS AT THE SAME TIME, PLAYER DOES NOT MOVE
+                    //horizontal in the X for right and left
+                    //vertical in the Z for up and down (less speed for up and down movement)
+                    axisInputs = (new Vector3(Input.GetAxis("Horizontal"), rb.velocity.y, Input.GetAxis("Vertical"))).normalized;
 
-                //combat code
-                #region
-                //if (left mouse button OR Spacebar key is pressed) AND player is able to attack again (cooldown is at 0)
-                if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) && attackCooldown == 0)
-                {
-                    //set is attacking to true
-                    isAttacking = true;
-                    //set attack cooldown
-                    attackCooldown = timeBetweenAttacks;
-                    //set attack trigger in animator to true
-                    anim.SetTrigger("attack");
-                }
+                    //if the player is not currently moving at max speed (IF STATEMENT NOT NEEDED ???) [max speed variable]
+                    //if (currentSpeed < maxSpeed)
+                    //{
+                    if (!isAttacking)
+                    {
+                        //move player on X axis at full player speed and Z axis at half player speed (FOR MOVEMENT BALANCE) based on inputs and keep the movement on Y axis as is
+                        //[REMEOVE (/ 2) IF NEED FASTER VERTICAL MOVEMENT]
+                        rb.velocity = new Vector3(axisInputs.x * playerSpeed, rb.velocity.y, axisInputs.z * (playerSpeed / 2));
+                    }
+                    //}
                     #endregion
+
+                    //update current speed every frame
+                    currentSpeed = rb.velocity.magnitude;
+
+                    //update animator's speed variable to currentSpeed
+                    anim.SetFloat("speed", currentSpeed);
+
+                    //sprite direction determination
+                    #region
+                    //if moving right
+                    if (rb.velocity.x > 0)
+                    {
+                        //set x flip to false (face right)
+                        sr.flipX = false;
+                        facingRight = true;
+                    }//else if moving left
+                    else if (rb.velocity.x < 0)
+                    {
+                        //set x flip to true (face left)
+                        sr.flipX = true;
+                        facingRight = false;
+                    }
+                    #endregion
+
+                    //combat code
+                    #region
+                    //if (left mouse button OR Spacebar key is pressed) AND player is able to attack again (cooldown is at 0)
+                    if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) && attackCooldown == 0)
+                    {
+                        //set is attacking to true
+                        isAttacking = true;
+                        //set attack cooldown
+                        attackCooldown = timeBetweenAttacks;
+                        //set attack trigger in animator to true
+                        anim.SetTrigger("attack");
+                    }
+                    #endregion
+                }
             }
-        }
-        else
-        { //else the player is dead
-            //NEED TO CHANGE THIS [BUT FOR NOW IF YOU DIE IT JUST RELOADS THE LEVEL]
-            SceneManager.LoadScene(currentScene);
+            else
+            { //else the player is dead
+              //NEED TO CHANGE THIS [BUT FOR NOW IF YOU DIE IT JUST RELOADS THE LEVEL]
+                SceneManager.LoadScene(currentScene);
+            }
+
+            //END OF UPDATE [INSIDE if (!GameManager.instance.isPaused)]
         }
     }
 
@@ -176,6 +184,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit[] hits;
         //RaycastHit[] hits2; //IF I WANT TO ADD MORE HIT WIDTH
         //RaycastHit[] hits3; //IF I WANT TO ADD MORE HIT WIDTH
+        Vector3 rayStartPosition;
 
         //determine what direction the payer is facing to attack that direction
         //if facing right
@@ -185,6 +194,9 @@ public class PlayerController : MonoBehaviour
             rayDir = transform.right;
             //rayDir2 = transform.right + new Vector3(0, 0, 0.5f); //IF I WANT TO ADD MORE HIT WIDTH
             //rayDir3 = transform.right + new Vector3(0, 0, -0.5f); //IF I WANT TO ADD MORE HIT WIDTH
+
+            //move the start of the ray to the left side of the player's collider (this is to avoid hits not registering if the enemy is right on the player)
+            rayStartPosition = new Vector3(transform.position.x - 0.125f, transform.position.y + 0.25f, transform.position.z);
         }
         else
         { //else the player is facing left
@@ -192,9 +204,14 @@ public class PlayerController : MonoBehaviour
             rayDir = -transform.right;
             //rayDir2 = -transform.right + new Vector3(0, 0, 0.5f); //IF I WANT TO ADD MORE HIT WIDTH
             //rayDir3 = -transform.right + new Vector3(0, 0, -0.5f); //IF I WANT TO ADD MORE HIT WIDTH
+
+            //move the start of the ray to the right side of the player's collider (this is to avoid hits not registering if the enemy is right on the player)
+            rayStartPosition = new Vector3(transform.position.x + 0.125f, transform.position.y + 0.25f, transform.position.z);
         }
 
-        hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, attackRange, layerMask1);
+        Debug.DrawRay(rayStartPosition, rayDir * attackRange, Color.green, 50000);
+        hits = Physics.RaycastAll(rayStartPosition, rayDir, attackRange, layerMask1);
+        //hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, attackRange, layerMask1);
         //hits2 = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir2, attackRange, layerMask1); //IF I WANT TO ADD MORE HIT WIDTH
         //hits3 = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir3, attackRange, layerMask1); //IF I WANT TO ADD MORE HIT WIDTH
 
@@ -211,9 +228,9 @@ public class PlayerController : MonoBehaviour
                     //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
                     //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
                     hit.transform.GetComponent<DragonWarriorNavMesh>().Stagger();
-                    //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
-                    //Debug.DrawRay(transform.position, rayDir2 * 0.4f, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
-                    //Debug.DrawRay(transform.position, rayDir3 * 0.4f, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+                    //Debug.DrawRay(transform.position, rayDir * attackRange, Color.red, 50000);
+                    //Debug.DrawRay(transform.position, rayDir2 * attackRange, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+                    //Debug.DrawRay(transform.position, rayDir3 * attackRange, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
                 }
                 else if (hit.transform.GetComponent<NinjaNavMesh>() != null)
                 {

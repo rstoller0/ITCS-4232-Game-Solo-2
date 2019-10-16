@@ -60,8 +60,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Camera\FollowTargetArea.cs" />
     <Compile Include="Assets\Scripts\Control\DragonWarriorNavMesh.cs" />
-    <Compile Include="Assets\Scripts\Control\FollowTargetArea.cs" />
     <Compile Include="Assets\Scripts\Control\Health.cs" />
     <Compile Include="Assets\Scripts\Control\NinjaNavMesh.cs" />
     <Compile Include="Assets\Scripts\Control\PlayerController.cs" />
@@ -71,6 +71,11 @@
     <Compile Include="Assets\Scripts\Trashed (Previous Versions)\PlayerController_OLD.cs" />
     <Compile Include="Assets\Scripts\Trashed (Previous Versions)\SkeletonController.cs" />
     <Compile Include="Assets\Scripts\Trashed (Previous Versions)\SkeletonControllerType2.cs" />
+    <Compile Include="Assets\Scripts\UI\BackgroundMusicScript.cs" />
+    <Compile Include="Assets\Scripts\UI\EnemyHealthManager.cs" />
+    <Compile Include="Assets\Scripts\UI\GameManager.cs" />
+    <Compile Include="Assets\Scripts\UI\HUDManager.cs" />
+    <Compile Include="Assets\Scripts\UI\MenuUIManager.cs" />
     <None Include="Assets\Knight Files\Read Me.txt" />
     <None Include="Assets\Ninja Files\Read Me.txt" />
     <None Include="Assets\Dragon Warrior Files\Read Me.txt" />

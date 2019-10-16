@@ -4,7 +4,18 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
+    [SerializeField] private float maxHealth;
     [SerializeField] private float health;
+
+    void Start()
+    {
+        health = maxHealth;
+    }
+
+    public float GetMaxHealth()
+    {
+        return maxHealth;
+    }
 
     public float GetHealth()
     {
