@@ -23,6 +23,8 @@ public class PlayerController : MonoBehaviour
     private bool isWaitingToAttack = false;
     private bool isStaggered = false;
     private Health healthScript;
+    private bool hasSword = true;
+    private bool hasAxe = false;
 
     //movement variables
     [Range(0, 5)] [SerializeField] float playerSpeed = 2;
@@ -116,6 +118,15 @@ public class PlayerController : MonoBehaviour
 
                     //combat code
                     #region
+                    //if Q key is pressed, swap weapons
+                    if (Input.GetKeyDown(KeyCode.Q) && !isAttacking)
+                    {
+                        hasSword = !hasSword;
+                        anim.SetBool("hasSword", hasSword);
+                        hasAxe = !hasAxe;
+                        anim.SetBool("hasAxe", hasAxe);
+                    }
+
                     //if (left mouse button OR Spacebar key is pressed) AND player is able to attack again (cooldown is at 0)
                     if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) && attackCooldown == 0)
                     {
