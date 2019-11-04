@@ -7,6 +7,7 @@ public class MenuUIManager : MonoBehaviour
 {
     public static MenuUIManager instance;
     private Canvas menu;
+    [SerializeField] private bool setMenuAsEnabled = true;
 
     void Awake()
     {
@@ -24,6 +25,7 @@ public class MenuUIManager : MonoBehaviour
     void Start()
     {
         menu = GetComponent<Canvas>();
+        menu.enabled = setMenuAsEnabled;
     }
 
     void Update()

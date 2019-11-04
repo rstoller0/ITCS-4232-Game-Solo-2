@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
     private Health healthScript;
     private bool hasSword = true;
     private bool hasAxe = false;
+    private bool hasScythe = false;
 
     //movement variables
     [Range(0, 5)] [SerializeField] float playerSpeed = 2;
@@ -121,10 +122,28 @@ public class PlayerController : MonoBehaviour
                     //if Q key is pressed, swap weapons
                     if (Input.GetKeyDown(KeyCode.Q) && !isAttacking)
                     {
-                        hasSword = !hasSword;
+                        if (hasSword)
+                        {
+                            hasSword = false;
+                            hasAxe = true;
+                            hasScythe = false;
+                        }
+                        else if(hasAxe)
+                        {
+                            hasSword = false;
+                            hasAxe = false;
+                            hasScythe = true;
+                        }
+                        else
+                        {
+                            hasSword = true;
+                            hasAxe = false;
+                            hasScythe = false;
+                        }
+
                         anim.SetBool("hasSword", hasSword);
-                        hasAxe = !hasAxe;
                         anim.SetBool("hasAxe", hasAxe);
+                        anim.SetBool("hasScythe", hasScythe);
                     }
 
                     //if (left mouse button OR Spacebar key is pressed) AND player is able to attack again (cooldown is at 0)

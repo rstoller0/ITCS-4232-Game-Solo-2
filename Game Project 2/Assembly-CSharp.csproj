@@ -77,6 +77,7 @@
     <Compile Include="Assets\Scripts\UI\HUDManager.cs" />
     <Compile Include="Assets\Scripts\UI\MenuUIManager.cs" />
     <None Include="Assets\Knight Files\Read Me.txt" />
+    <None Include="Assets\Easy DG Assets 1 - Wood + Stone\README.txt" />
     <None Include="Assets\Ninja Files\Read Me.txt" />
     <None Include="Assets\Dragon Warrior Files\Read Me.txt" />
     <Reference Include="Unity.TextMeshPro.Editor">
