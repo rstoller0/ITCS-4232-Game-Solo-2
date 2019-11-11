@@ -26,12 +26,17 @@ public class DragonWarriorNavMesh : MonoBehaviour
     [SerializeField] private GameObject attackProjectile;
     [Tooltip("Time between attacks (Lower means faster attack speed)")]
     [Range(0, 5)] [SerializeField] private float timeBetweenAttacks = 3;
+    [Tooltip("[Unused??? Actual Stagger Stat For DragonWarrior is on Projectile] Time player will be staggered (i.e. not able to attack after being hit)")]
+    [Range(0, 5)] [SerializeField] private float staggerStat = 0.25f;
     private bool inAttackRange = false;
     private float attackCooldown = 0;
     private bool isAttacking = false;
     private bool isWaitingToAttack = false;
     private bool isStaggered = false;
     private Health healthScript;
+
+    //stagger time variable to be changed by attackers weapon stats
+    private float staggerTime = 0.25f;
 
     //variable for desired location for the ninja to move to
     private Vector3 targetVector;
@@ -107,13 +112,13 @@ public class DragonWarriorNavMesh : MonoBehaviour
                 //sprite direction determination
                 #region
                 //if moving right OR if the player is to the right of the ninja
-                if (navMeshAgent.velocity.x > 0 || target.position.x - transform.position.x > 0)
+                if (navMeshAgent.velocity.x > 0.05f || target.position.x - transform.position.x > 0)
                 {
                     //set x flip to false (face right)
                     sr.flipX = false;
                     facingRight = true;
                 }//else if moving left OR if the player is to the left of the ninja
-                else if (navMeshAgent.velocity.x < 0 || target.position.x - transform.position.x < 0)
+                else if (navMeshAgent.velocity.x < 0.05f || target.position.x - transform.position.x < 0)
                 {
                     //set x flip to true (face left)
                     sr.flipX = true;
@@ -200,10 +205,11 @@ public class DragonWarriorNavMesh : MonoBehaviour
 
     //stagger functions
     #region
-    public void Stagger()
+    public void Stagger(float timeToStagger)
     {
         //set is staggered to true and trigger the animation
         isStaggered = true;
+        staggerTime = timeToStagger;
         anim.SetTrigger("stagger");
     }
 
@@ -217,7 +223,7 @@ public class DragonWarriorNavMesh : MonoBehaviour
         //and sets the attack cooldown to a short duration [it might have been set to a high number]...
         //this ensure that the player is not unable to attck for a long time after coming out of a stagger...
         isAttacking = false;
-        attackCooldown = 0.25f;
+        attackCooldown = staggerTime;
     }
     #endregion
 
@@ -275,7 +281,7 @@ public class DragonWarriorNavMesh : MonoBehaviour
 
                 //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
                 //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
-                hit.transform.GetComponent<PlayerController>().Stagger();
+                hit.transform.GetComponent<PlayerController>().Stagger(staggerStat);
                 //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
                 //Debug.DrawRay(transform.position, rayDir2 * 0.4f, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
                 //Debug.DrawRay(transform.position, rayDir3 * 0.4f, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??

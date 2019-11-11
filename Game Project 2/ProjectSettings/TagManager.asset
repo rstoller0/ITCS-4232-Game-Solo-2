@@ -8,6 +8,9 @@ TagManager:
   - ground
   - Enemy
   - EnemyProjectile
+  - axePickup
+  - scythePickup
+  - levelEnd
   layers:
   - Default
   - TransparentFX

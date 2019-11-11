@@ -188,7 +188,9 @@ MonoBehaviour:
   currentScene: Sandbox
   attackRange: 0.55
   attackDamage: 25
-  timeBetweenAttacks: 1
+  timeBetweenAttacks: 1.35
+  axeAquired: 0
+  scytheAquired: 0
   playerSpeed: 2
   currentSpeed: 0
 --- !u!95 &4845825640130588142

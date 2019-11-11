@@ -216,7 +216,7 @@ public class PlayerController_OLD : MonoBehaviour
 
             //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
             //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
-            hit.transform.GetComponent<DragonWarriorNavMesh>().Stagger();
+            hit.transform.GetComponent<DragonWarriorNavMesh>().Stagger(0.25f);
             //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
         }
         #endregion

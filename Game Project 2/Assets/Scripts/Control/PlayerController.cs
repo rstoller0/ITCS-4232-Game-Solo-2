@@ -14,18 +14,34 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
 
     //range/combat variables
-    [SerializeField] private float attackRange = 0.4f;
-    [SerializeField] private float attackDamage = 10;
+    [SerializeField] private float attackRange = 0.55f;
+    [SerializeField] private float attackDamage = 25;
+    private float swordDamage = 25;
+    private float axeDamage = 35;
+    private float scytheDamage = 15;
     [Tooltip("Time between attacks (Lower means faster attack speed)")]
-    [Range(0, 5)] [SerializeField] private float timeBetweenAttacks = 1;
+    [Range(0, 5)] [SerializeField] private float timeBetweenAttacks = 1.35f;
     private float attackCooldown = 0;
+    private float swordCooldown = 1.5f;
+    private float axeCooldown = 2f;
+    private float scytheCooldown = 1f;
+    [Tooltip("Time enemy will be staggered (i.e. not able to attack after being hit)")]
+    [Range(0, 5)] [SerializeField] private float staggerStat = 0.25f;
+    private float swordStaggerStat = 0.25f;
+    private float axeStaggerStat = 0.35f;
+    private float scytheStaggerStat = 0.15f;
     private bool isAttacking = false;
     private bool isWaitingToAttack = false;
     private bool isStaggered = false;
     private Health healthScript;
+    [SerializeField] private bool axeAquired = false;
+    [SerializeField] private bool scytheAquired = false;
     private bool hasSword = true;
     private bool hasAxe = false;
     private bool hasScythe = false;
+
+    //stagger time variable to be changed by attackers weapon stats
+    private float staggerTime = 0.25f;
 
     //movement variables
     [Range(0, 5)] [SerializeField] float playerSpeed = 2;
@@ -122,24 +138,64 @@ public class PlayerController : MonoBehaviour
                     //if Q key is pressed, swap weapons
                     if (Input.GetKeyDown(KeyCode.Q) && !isAttacking)
                     {
-                        if (hasSword)
+                        if (axeAquired)
                         {
-                            hasSword = false;
-                            hasAxe = true;
-                            hasScythe = false;
+                            //if the axe has been aquired
+                            if (scytheAquired)
+                            {
+                                //if the axe and the scythe have been aquired
+                                if (hasSword)
+                                {
+                                    hasSword = false;
+                                    hasAxe = true;
+                                    attackDamage = axeDamage;
+                                    timeBetweenAttacks = axeCooldown;
+                                    staggerStat = axeStaggerStat;
+                                    hasScythe = false;
+                                }
+                                else if (hasAxe)
+                                {
+                                    hasSword = false;
+                                    hasAxe = false;
+                                    hasScythe = true;
+                                    attackDamage = scytheDamage;
+                                    timeBetweenAttacks = scytheCooldown;
+                                    staggerStat = scytheStaggerStat;
+                                }
+                                else
+                                {
+                                    hasSword = true;
+                                    attackDamage = swordDamage;
+                                    timeBetweenAttacks = swordCooldown;
+                                    staggerStat = swordStaggerStat;
+                                    hasAxe = false;
+                                    hasScythe = false;
+                                }
+                            }
+                            else
+                            {
+                                //else only the axe has been aquired
+                                if (hasSword)
+                                {
+                                    hasSword = false;
+                                    hasAxe = true;
+                                    attackDamage = axeDamage;
+                                    timeBetweenAttacks = axeCooldown;
+                                    staggerStat = axeStaggerStat;
+                                    hasScythe = false;
+                                }
+                                else
+                                {
+                                    hasSword = true;
+                                    attackDamage = swordDamage;
+                                    timeBetweenAttacks = swordCooldown;
+                                    staggerStat = swordStaggerStat;
+                                    hasAxe = false;
+                                    hasScythe = false;
+                                }
+                            }
                         }
-                        else if(hasAxe)
-                        {
-                            hasSword = false;
-                            hasAxe = false;
-                            hasScythe = true;
-                        }
-                        else
-                        {
-                            hasSword = true;
-                            hasAxe = false;
-                            hasScythe = false;
-                        }
+                        //else axe is not aquired, so neither is the scythe
 
                         anim.SetBool("hasSword", hasSword);
                         anim.SetBool("hasAxe", hasAxe);
@@ -169,12 +225,28 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "axePickup")
+        {
+            axeAquired = true;
+            Destroy(other.gameObject);
+        }
+
+        if (other.tag == "scythePickup")
+        {
+            scytheAquired = true;
+            Destroy(other.gameObject);
+        }
+    }
+
     //stagger functions
     #region
-    public void Stagger()
+    public void Stagger(float timeToStagger)
     {
         //set is staggered to true and trigger the animation
         isStaggered = true;
+        staggerTime = timeToStagger;
         anim.SetTrigger("stagger");
     }
 
@@ -188,7 +260,7 @@ public class PlayerController : MonoBehaviour
         //and sets the attack cooldown to a short duration [it might have been set to a high number]...
         //this ensure that the player is not unable to attck for a long time after coming out of a stagger...
         isAttacking = false;
-        attackCooldown = 0.25f;
+        attackCooldown = staggerTime;
     }
     #endregion
 
@@ -257,7 +329,7 @@ public class PlayerController : MonoBehaviour
 
                     //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
                     //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
-                    hit.transform.GetComponent<DragonWarriorNavMesh>().Stagger();
+                    hit.transform.GetComponent<DragonWarriorNavMesh>().Stagger(staggerStat);
                     //Debug.DrawRay(transform.position, rayDir * attackRange, Color.red, 50000);
                     //Debug.DrawRay(transform.position, rayDir2 * attackRange, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
                     //Debug.DrawRay(transform.position, rayDir3 * attackRange, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
@@ -269,7 +341,7 @@ public class PlayerController : MonoBehaviour
 
                     //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
                     //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
-                    hit.transform.GetComponent<NinjaNavMesh>().Stagger();
+                    hit.transform.GetComponent<NinjaNavMesh>().Stagger(staggerStat);
                     //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
                     //Debug.DrawRay(transform.position, rayDir2 * 0.4f, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
                     //Debug.DrawRay(transform.position, rayDir3 * 0.4f, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??

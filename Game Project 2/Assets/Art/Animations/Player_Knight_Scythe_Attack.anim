@@ -21,17 +21,17 @@ AnimationClip:
   - curve:
     - time: 0
       value: {fileID: 21300000, guid: 69daefecef3dacf4a9308ce20af9db4f, type: 3}
-    - time: 0.2
+    - time: 0.15
       value: {fileID: 21300000, guid: 554ff65514f894645a0b59f74ea53097, type: 3}
-    - time: 0.35
+    - time: 0.28333333
       value: {fileID: 21300000, guid: 8a2fdadf239fdb94c9d47a97b324c718, type: 3}
-    - time: 0.41666666
+    - time: 0.33333334
       value: {fileID: 21300000, guid: 1d2861654892a714aa7c0f49854e7750, type: 3}
-    - time: 0.48333332
+    - time: 0.38333333
       value: {fileID: 21300000, guid: 796175c46de2b274d8bf47d603bfbdaf, type: 3}
-    - time: 0.55
+    - time: 0.43333334
       value: {fileID: 21300000, guid: 45dbaedebc653b44d8d59085786d5ba9, type: 3}
-    - time: 0.6166667
+    - time: 0.48333332
       value: {fileID: 21300000, guid: 45dbaedebc653b44d8d59085786d5ba9, type: 3}
     attribute: m_Sprite
     path: Knight_idle_01
@@ -64,7 +64,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.6333333
+    m_StopTime: 0.5
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -84,14 +84,14 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 0.35
+  - time: 0.28333333
     functionName: Hit
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.6166667
+  - time: 0.48333332
     functionName: StopAttack
     data: 
     objectReferenceParameter: {fileID: 0}

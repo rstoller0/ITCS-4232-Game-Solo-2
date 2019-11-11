@@ -8,6 +8,7 @@ public class MenuUIManager : MonoBehaviour
     public static MenuUIManager instance;
     private Canvas menu;
     [SerializeField] private bool setMenuAsEnabled = true;
+    [SerializeField] private string levelToLoad = "Level1";
 
     void Awake()
     {
@@ -74,7 +75,7 @@ public class MenuUIManager : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "MainMenu")
         {
             //load level 1 (ONLY HAVE SANDBOX FOR NOW)
-            SceneManager.LoadScene("Sandbox");
+            SceneManager.LoadScene(levelToLoad);
         }
         else
         {//else we are on another scene and the game must be paused

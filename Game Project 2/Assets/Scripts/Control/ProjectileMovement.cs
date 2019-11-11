@@ -8,6 +8,8 @@ public class ProjectileMovement : MonoBehaviour
     [SerializeField] private float distanceToTravel = 2.0f;
     [SerializeField] private float projectileSpeed = 1.0f;
     [SerializeField] private float projectileDamage = 10.0f;
+    [Tooltip("Time player will be staggered (i.e. not able to attack after being hit)")]
+    [Range(0, 5)] [SerializeField] private float staggerStat = 0.25f;
     private Rigidbody rb;
     private Vector3 maxRange;
 
@@ -39,8 +41,17 @@ public class ProjectileMovement : MonoBehaviour
 
             //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
             //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
-            other.transform.GetComponent<PlayerController>().Stagger();
+            other.transform.GetComponent<PlayerController>().Stagger(staggerStat);
 
+            Destroy(gameObject);
+        }
+        else if (other.transform.tag == "Enemy")
+        {
+            //else if hitting another enemy, do nothing
+        }
+        else
+        {
+            //else hit a wall or something so destroy the projectile
             Destroy(gameObject);
         }
     }
