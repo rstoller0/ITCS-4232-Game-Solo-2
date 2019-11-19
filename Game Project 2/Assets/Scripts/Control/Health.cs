@@ -12,6 +12,11 @@ public class Health : MonoBehaviour
         health = maxHealth;
     }
 
+    public void GainHealth(float healthGain)
+    {
+        health = Mathf.Min(maxHealth, health + healthGain);
+    }
+
     public float GetMaxHealth()
     {
         return maxHealth;

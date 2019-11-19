@@ -1002,6 +1002,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   setMenuAsEnabled: 1
+  levelToLoad: Level1
 --- !u!1 &186730499
 GameObject:
   m_ObjectHideFlags: 0
@@ -7998,6 +7999,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   setMenuAsEnabled: 1
+  levelToLoad: Level1
 --- !u!114 &1777726956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9353,8 +9355,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "W / \u2191\nD / \u2193\nA / \u2190\nD / \u2192\nSpacebar / LMB\nShift /
-    RMB (NOT IN YET)"
+  m_Text: "W / \u2191\nD / \u2193\nA / \u2190\nD / \u2192\nSpacebar / LMB\nLeft Shift"
 --- !u!222 &2139256732
 CanvasRenderer:
   m_ObjectHideFlags: 0

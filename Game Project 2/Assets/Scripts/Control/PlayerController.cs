@@ -35,6 +35,10 @@ public class PlayerController : MonoBehaviour
     private bool isStaggered = false;
     private bool isBlocking = false;
     private bool startBlocking = false;
+    [SerializeField]private float maxBlockTime = 1.0f;
+    [SerializeField]private float blockTimer = 0;
+    [SerializeField]private float timeBetweenBlocks = 0.5f;
+    [SerializeField]private float blockCooldown = 0;
     private Health healthScript;
     [SerializeField] private bool axeAquired = false;
     [SerializeField] private bool scytheAquired = false;
@@ -223,21 +227,38 @@ public class PlayerController : MonoBehaviour
                         anim.SetTrigger("attack");
                     }
 
-                    //if left shift is pressed AND player is not moving AND player is not staggered AND player is not attacking
-                    if (Input.GetKey(KeyCode.LeftShift) && currentSpeed < 0.01 && !isStaggered && !isAttacking)
+                    //here we keep track of block cooldown (when blockCooldown reaches 0 player can block again)
+                    if (blockCooldown > 0)
+                    {
+                        blockCooldown = Mathf.Max(0, blockCooldown - Time.deltaTime);
+                    }
+
+                    //if left shift is pressed AND player is not moving AND player is not staggered AND player is not attacking AND block is not on cooldown
+                    if (Input.GetKey(KeyCode.LeftShift) && currentSpeed < 0.01 && !isStaggered && !isAttacking && blockCooldown == 0)
                     {
                         //set player to blocking
                         startBlocking = true;
                         anim.SetBool("isBlocking", true);
                     }
 
-                    //if left shift is released
-                    if (Input.GetKeyUp(KeyCode.LeftShift))
+                    //here we keep track of time spent blocking (when block timer reaches maxBlockTime it will stop blocking)
+                    if (isBlocking)
+                    {
+                        blockTimer += Time.deltaTime;
+                    }
+
+                    //if left shift is released OR blockTimer has reached maxBlockTime
+                    if (Input.GetKeyUp(KeyCode.LeftShift) || blockTimer > maxBlockTime)
                     {
                         //set player to not blocking
                         startBlocking = false;
                         isBlocking = false;
                         anim.SetBool("isBlocking", false);
+
+                        //reset blockTimer to 0
+                        blockTimer = 0;
+                        //set block cooldown to time between blocks
+                        blockCooldown = timeBetweenBlocks;
                     }
                     #endregion
                 }
