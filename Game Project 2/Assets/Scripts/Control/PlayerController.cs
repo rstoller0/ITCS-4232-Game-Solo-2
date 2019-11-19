@@ -33,6 +33,8 @@ public class PlayerController : MonoBehaviour
     private bool isAttacking = false;
     private bool isWaitingToAttack = false;
     private bool isStaggered = false;
+    private bool isBlocking = false;
+    private bool startBlocking = false;
     private Health healthScript;
     [SerializeField] private bool axeAquired = false;
     [SerializeField] private bool scytheAquired = false;
@@ -55,6 +57,11 @@ public class PlayerController : MonoBehaviour
 
     //variable for movement inputs
     Vector3 axisInputs;
+
+    public bool GetIsBlocking()
+    {
+        return isBlocking;
+    }
 
     private void Start()
     {
@@ -101,7 +108,8 @@ public class PlayerController : MonoBehaviour
                     //if the player is not currently moving at max speed (IF STATEMENT NOT NEEDED ???) [max speed variable]
                     //if (currentSpeed < maxSpeed)
                     //{
-                    if (!isAttacking)
+                    //if plater is not attacking AND is not blocking
+                    if (!isAttacking && !isBlocking)
                     {
                         //move player on X axis at full player speed and Z axis at half player speed (FOR MOVEMENT BALANCE) based on inputs and keep the movement on Y axis as is
                         //[REMEOVE (/ 2) IF NEED FASTER VERTICAL MOVEMENT]
@@ -136,7 +144,8 @@ public class PlayerController : MonoBehaviour
                     //combat code
                     #region
                     //if Q key is pressed, swap weapons
-                    if (Input.GetKeyDown(KeyCode.Q) && !isAttacking)
+                    #region
+                    if (Input.GetKeyDown(KeyCode.Q) && !isAttacking && !isBlocking)
                     {
                         if (axeAquired)
                         {
@@ -201,9 +210,10 @@ public class PlayerController : MonoBehaviour
                         anim.SetBool("hasAxe", hasAxe);
                         anim.SetBool("hasScythe", hasScythe);
                     }
+                    #endregion
 
                     //if (left mouse button OR Spacebar key is pressed) AND player is able to attack again (cooldown is at 0)
-                    if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) && attackCooldown == 0)
+                    if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) && attackCooldown == 0 && !isBlocking)
                     {
                         //set is attacking to true
                         isAttacking = true;
@@ -211,6 +221,23 @@ public class PlayerController : MonoBehaviour
                         attackCooldown = timeBetweenAttacks;
                         //set attack trigger in animator to true
                         anim.SetTrigger("attack");
+                    }
+
+                    //if left shift is pressed AND player is not moving AND player is not staggered AND player is not attacking
+                    if (Input.GetKey(KeyCode.LeftShift) && currentSpeed < 0.01 && !isStaggered && !isAttacking)
+                    {
+                        //set player to blocking
+                        startBlocking = true;
+                        anim.SetBool("isBlocking", true);
+                    }
+
+                    //if left shift is released
+                    if (Input.GetKeyUp(KeyCode.LeftShift))
+                    {
+                        //set player to not blocking
+                        startBlocking = false;
+                        isBlocking = false;
+                        anim.SetBool("isBlocking", false);
                     }
                     #endregion
                 }
@@ -239,6 +266,15 @@ public class PlayerController : MonoBehaviour
             Destroy(other.gameObject);
         }
     }
+
+    //block functions
+    #region
+    public void Block()
+    {
+        //set is blocking to true and trigger the animation
+        isBlocking = true;
+    }
+    #endregion
 
     //stagger functions
     #region
@@ -270,13 +306,15 @@ public class PlayerController : MonoBehaviour
     private void Hit()
     {
         #region
-        //bit shift the index of the Enemy layer (12)
+        //bit shift the index of the Enemy layer (12) and EnemyProjectile layer (13)
         int layerMask1 = 1 << 12;
         //int layerMask2 = 1 << 10;
+        int layerMask3 = 1 << 13;
 
         //this would cast rays only against colliders in layer 8 or against layer 9.
         //but instead we want to collide against everything except layer 8 and layer 9. The ~ operator does this, it inverts a bitmasks.
-        //int layerMask3 = ~(layerMask1 | layerMask2);
+        //int layerMask4 = ~(layerMask1 | layerMask2);
+        int layerMask5 = (layerMask1 | layerMask3);
 
         //set up variables for raycast detection of hitting enemies
         //RaycastHit hit;
@@ -298,7 +336,8 @@ public class PlayerController : MonoBehaviour
             //rayDir3 = transform.right + new Vector3(0, 0, -0.5f); //IF I WANT TO ADD MORE HIT WIDTH
 
             //move the start of the ray to the left side of the player's collider (this is to avoid hits not registering if the enemy is right on the player)
-            rayStartPosition = new Vector3(transform.position.x - 0.125f, transform.position.y + 0.25f, transform.position.z);
+            //rayStartPosition = new Vector3(transform.position.x - 0.125f, transform.position.y + 0.25f, transform.position.z);
+            rayStartPosition = new Vector3(transform.position.x - 0.125f, transform.position.y + 0.1f, transform.position.z);
         }
         else
         { //else the player is facing left
@@ -308,11 +347,13 @@ public class PlayerController : MonoBehaviour
             //rayDir3 = -transform.right + new Vector3(0, 0, -0.5f); //IF I WANT TO ADD MORE HIT WIDTH
 
             //move the start of the ray to the right side of the player's collider (this is to avoid hits not registering if the enemy is right on the player)
-            rayStartPosition = new Vector3(transform.position.x + 0.125f, transform.position.y + 0.25f, transform.position.z);
+            //rayStartPosition = new Vector3(transform.position.x + 0.125f, transform.position.y + 0.25f, transform.position.z);
+            rayStartPosition = new Vector3(transform.position.x + 0.125f, transform.position.y + 0.1f, transform.position.z);
         }
 
         Debug.DrawRay(rayStartPosition, rayDir * attackRange, Color.green, 50000);
-        hits = Physics.RaycastAll(rayStartPosition, rayDir, attackRange, layerMask1);
+        //hits = Physics.RaycastAll(rayStartPosition, rayDir, attackRange, layerMask1);
+        hits = Physics.RaycastAll(rayStartPosition, rayDir, attackRange, layerMask5);
         //hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, attackRange, layerMask1);
         //hits2 = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir2, attackRange, layerMask1); //IF I WANT TO ADD MORE HIT WIDTH
         //hits3 = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir3, attackRange, layerMask1); //IF I WANT TO ADD MORE HIT WIDTH
@@ -346,6 +387,12 @@ public class PlayerController : MonoBehaviour
                     //Debug.DrawRay(transform.position, rayDir2 * 0.4f, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
                     //Debug.DrawRay(transform.position, rayDir3 * 0.4f, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
                 }
+            }
+            else if (hit.transform.tag == "EnemyProjectile")
+            {
+                //Debug.Log("Hit Projectile");
+                //destroy enemy projectile
+                Destroy(hit.transform.gameObject);
             }
         }
         #endregion

@@ -25,6 +25,8 @@ public class NinjaNavMesh : MonoBehaviour
     [SerializeField] private float attackDamage = 10;
     [Tooltip("Time between attacks (Lower means faster attack speed)")]
     [Range(0, 5)] [SerializeField] private float timeBetweenAttacks = 3;
+    [Tooltip("[RANDOM] Play speed during attack (How fast it hits when attack animation is played)")]
+    [Range(0.7f, 1.7f)] [SerializeField] private float animAttackSpeed = 1;
     [Tooltip("Time player will be staggered (i.e. not able to attack after being hit)")]
     [Range(0, 5)] [SerializeField] private float staggerStat = 0.25f;
     private bool inAttackRange = false;
@@ -52,6 +54,9 @@ public class NinjaNavMesh : MonoBehaviour
 
         //get ninja's animator at start
         anim = GetComponent<Animator>();
+        anim.speed = 1;
+        //randomly assign Attack Animation Speed
+        animAttackSpeed = Random.Range(0.7f, 1.7f);
 
         //get ninja's sprite renderer at start
         sr = GetComponentInChildren<SpriteRenderer>();
@@ -146,6 +151,8 @@ public class NinjaNavMesh : MonoBehaviour
                     isAttacking = true;
                     //set attack cooldown
                     attackCooldown = timeBetweenAttacks;
+                    //set animator play speed to variable for attack play speed
+                    anim.speed = animAttackSpeed;
                     //set attack trigger in animator to true
                     anim.SetTrigger("attack");
                 }
@@ -206,6 +213,8 @@ public class NinjaNavMesh : MonoBehaviour
     #region
     public void Stagger(float timeToStagger)
     {
+        //reset animator play speed to default
+        anim.speed = 1;
         //set is staggered to true and trigger the animation
         isStaggered = true;
         staggerTime = timeToStagger;
@@ -260,7 +269,8 @@ public class NinjaNavMesh : MonoBehaviour
             //rayDir3 = transform.right + new Vector3(0, 0, -0.5f); //IF I WANT TO ADD MORE HIT WIDTH
 
             //move the start of the ray to the left side of the player's collider (this is to avoid hits not registering if the enemy is right on the player)
-            rayStartPosition = new Vector3(transform.position.x - 0.125f, transform.position.y + 0.25f, transform.position.z);
+            //rayStartPosition = new Vector3(transform.position.x - 0.125f, transform.position.y + 0.25f, transform.position.z);
+            rayStartPosition = new Vector3(transform.position.x - 0.125f, transform.position.y + 0.1f, transform.position.z);
         }
         else
         { //else the player is facing left
@@ -270,7 +280,8 @@ public class NinjaNavMesh : MonoBehaviour
             //rayDir3 = -transform.right + new Vector3(0, 0, -0.5f); //IF I WANT TO ADD MORE HIT WIDTH
 
             //move the start of the ray to the right side of the player's collider (this is to avoid hits not registering if the enemy is right on the player)
-            rayStartPosition = new Vector3(transform.position.x + 0.125f, transform.position.y + 0.25f, transform.position.z);
+            //rayStartPosition = new Vector3(transform.position.x + 0.125f, transform.position.y + 0.25f, transform.position.z);
+            rayStartPosition = new Vector3(transform.position.x + 0.125f, transform.position.y + 0.1f, transform.position.z);
         }
 
         //Debug.DrawRay(rayStartPosition, rayDir * attackRange, Color.red, 50000);
@@ -284,15 +295,18 @@ public class NinjaNavMesh : MonoBehaviour
         {
             if (hit.transform.tag == "Player")
             {
-                //do damage to that enemy
-                hit.transform.GetComponent<Health>().DoDamage(attackDamage);
+                //if the player is not blocking
+                if (hit.transform.GetComponent<PlayerController>().GetIsBlocking() == false) {
+                    //do damage to that enemy
+                    hit.transform.GetComponent<Health>().DoDamage(attackDamage);
 
-                //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
-                //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
-                hit.transform.GetComponent<PlayerController>().Stagger(staggerStat);
-                //Debug.DrawRay(transform.position, rayDir * attackRange, Color.red, 50000);
-                //Debug.DrawRay(transform.position, rayDir2 * attackRange, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
-                //Debug.DrawRay(transform.position, rayDir3 * attackRange, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+                    //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
+                    //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
+                    hit.transform.GetComponent<PlayerController>().Stagger(staggerStat);
+                    //Debug.DrawRay(transform.position, rayDir * attackRange, Color.red, 50000);
+                    //Debug.DrawRay(transform.position, rayDir2 * attackRange, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+                    //Debug.DrawRay(transform.position, rayDir3 * attackRange, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+                }
             }
         }
         #endregion
@@ -301,6 +315,8 @@ public class NinjaNavMesh : MonoBehaviour
     //setting isAttacking to false
     private void StopAttack()
     {
+        //reset animator play speed to default
+        anim.speed = 1;
         //set is attacking to false (this allows the player to move after the attack animation but before the player can attack again)
         isAttacking = false;
     }

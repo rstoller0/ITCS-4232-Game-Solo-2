@@ -108,7 +108,7 @@ NavMeshSettings:
     cellSize: 0.033333335
     manualTileSize: 0
     tileSize: 256
-    accuratePlacement: 0
+    accuratePlacement: 1
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 23800000, guid: f222506aa0200084295851be8e0f1c00, type: 2}
@@ -252,6 +252,8 @@ MonoBehaviour:
   attackDamage: 10
   attackProjectile: {fileID: 0}
   timeBetweenAttacks: 3
+  animAttackSpeed: 1
+  staggerStat: 0.25
 --- !u!1 &123415633
 GameObject:
   m_ObjectHideFlags: 0
@@ -4496,6 +4498,8 @@ MonoBehaviour:
   attackDamage: 10
   attackProjectile: {fileID: 0}
   timeBetweenAttacks: 3
+  animAttackSpeed: 1
+  staggerStat: 0.25
 --- !u!195 &1851476494
 NavMeshAgent:
   m_ObjectHideFlags: 0

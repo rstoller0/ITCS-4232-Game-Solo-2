@@ -24,8 +24,12 @@ public class DragonWarriorNavMesh : MonoBehaviour
     [SerializeField] private float attackRange = 0.4f;
     [SerializeField] private float attackDamage = 10;
     [SerializeField] private GameObject attackProjectile;
+    [Tooltip("[RANDOM] speed of fireball projectile")]
+    [SerializeField] private float projectileSpeed = 1;
     [Tooltip("Time between attacks (Lower means faster attack speed)")]
     [Range(0, 5)] [SerializeField] private float timeBetweenAttacks = 3;
+    [Tooltip("[RANDOM] Play speed during attack (How fast it hits when attack animation is played)")]
+    [Range(0.7f, 1.7f)] [SerializeField] private float animAttackSpeed = 1;
     [Tooltip("[Unused??? Actual Stagger Stat For DragonWarrior is on Projectile] Time player will be staggered (i.e. not able to attack after being hit)")]
     [Range(0, 5)] [SerializeField] private float staggerStat = 0.25f;
     private bool inAttackRange = false;
@@ -53,12 +57,18 @@ public class DragonWarriorNavMesh : MonoBehaviour
 
         //get dragonWarrior's animator at start
         anim = GetComponent<Animator>();
+        anim.speed = 1;
+        //randomly assign Attack Animation Speed
+        animAttackSpeed = Random.Range(0.7f, 1.7f);
 
         //get dragonWarrior's sprite renderer at start
         sr = GetComponentInChildren<SpriteRenderer>();
 
         //get dragonWarrior's health script at start
         healthScript = GetComponent<Health>();
+
+        //randomly assign the speed of this dragonWarrior's projectiles at the start
+        projectileSpeed = Random.Range(1.0f, 2.0f);
     }
 
     // Update is called once per frame
@@ -147,6 +157,8 @@ public class DragonWarriorNavMesh : MonoBehaviour
                     isAttacking = true;
                     //set attack cooldown
                     attackCooldown = timeBetweenAttacks;
+                    //set animator play speed to variable for attack play speed
+                    anim.speed = animAttackSpeed;
                     //set attack trigger in animator to true
                     anim.SetTrigger("attack");
                 }
@@ -207,6 +219,8 @@ public class DragonWarriorNavMesh : MonoBehaviour
     #region
     public void Stagger(float timeToStagger)
     {
+        //reset animator play speed to default
+        anim.speed = 1;
         //set is staggered to true and trigger the animation
         isStaggered = true;
         staggerTime = timeToStagger;
@@ -232,6 +246,7 @@ public class DragonWarriorNavMesh : MonoBehaviour
     //raycasting for damage dealing
     private void Hit()
     {
+        ///This code is unnecessary for projectile enemies
         #region
         //bit shift the index of the Player layer (10)
         int layerMask1 = 1 << 10;
@@ -267,26 +282,26 @@ public class DragonWarriorNavMesh : MonoBehaviour
             //rayDir3 = -transform.right + new Vector3(0, 0, -0.5f); //IF I WANT TO ADD MORE HIT WIDTH
         }
 
-        hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, attackRange, layerMask1);
+        ///hits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir, attackRange, layerMask1);
         //hits2 = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir2, attackRange, layerMask1); //IF I WANT TO ADD MORE HIT WIDTH
         //hits3 = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir3, attackRange, layerMask1); //IF I WANT TO ADD MORE HIT WIDTH
 
         //can hit multiple players at once
-        foreach (RaycastHit hit in hits)
-        {
-            if (hit.transform.tag == "Player")
-            {
+        ///foreach (RaycastHit hit in hits)
+        ///{
+            ///if (hit.transform.tag == "Player")
+            ///{
                 //do damage to that enemy
-                hit.transform.GetComponent<Health>().DoDamage(attackDamage);
+                ///hit.transform.GetComponent<Health>().DoDamage(attackDamage);
 
                 //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
                 //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
-                hit.transform.GetComponent<PlayerController>().Stagger(staggerStat);
+                ///hit.transform.GetComponent<PlayerController>().Stagger(staggerStat);
                 //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
                 //Debug.DrawRay(transform.position, rayDir2 * 0.4f, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
                 //Debug.DrawRay(transform.position, rayDir3 * 0.4f, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
-            }
-        }
+            ///}
+        ///}
         #endregion
     }
 
@@ -299,17 +314,21 @@ public class DragonWarriorNavMesh : MonoBehaviour
         {
             GameObject fireball = Instantiate(attackProjectile, transform.position + ((transform.up + transform.right) * 0.12f), Quaternion.LookRotation(transform.forward)) as GameObject;
             fireball.transform.Rotate(30, 0, 0);
+            fireball.GetComponent<ProjectileMovement>().SetProjectileSpeed(projectileSpeed);
         }
         else
         { //else the player is facing left
             GameObject fireball = Instantiate(attackProjectile, transform.position + ((transform.up - transform.right) * 0.12f), Quaternion.LookRotation(-transform.forward)) as GameObject;
             fireball.transform.Rotate(-30, 0, 0);
+            fireball.GetComponent<ProjectileMovement>().SetProjectileSpeed(projectileSpeed);
         }
     }
 
     //setting isAttacking to false
     private void StopAttack()
     {
+        //reset animator play speed to default
+        anim.speed = 1;
         //set is attacking to false (this allows the player to move after the attack animation but before the player can attack again)
         isAttacking = false;
     }

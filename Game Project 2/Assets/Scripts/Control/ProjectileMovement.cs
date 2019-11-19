@@ -6,7 +6,7 @@ public class ProjectileMovement : MonoBehaviour
 {
     [Tooltip("The distance the projectile will travel before disappearing")]
     [SerializeField] private float distanceToTravel = 2.0f;
-    [SerializeField] private float projectileSpeed = 1.0f;
+    private float projectileSpeed = 1.0f;
     [SerializeField] private float projectileDamage = 10.0f;
     [Tooltip("Time player will be staggered (i.e. not able to attack after being hit)")]
     [Range(0, 5)] [SerializeField] private float staggerStat = 0.25f;
@@ -19,6 +19,12 @@ public class ProjectileMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         maxRange = transform.position + (transform.right * distanceToTravel);
         //Debug.Log("This: " + transform.position + ", MaxRange: " + maxRange);
+        //projectileSpeed = Random.Range(1.0f, 3.0f);
+    }
+
+    public void SetProjectileSpeed(float speed)
+    {
+        projectileSpeed = speed;
     }
 
     // Update is called once per frame
@@ -36,12 +42,15 @@ public class ProjectileMovement : MonoBehaviour
     {
         if (other.transform.tag == "Player")
         {
-            //do damage to that enemy
-            other.transform.GetComponent<Health>().DoDamage(projectileDamage);
+            //if the player is not blocking
+            if (other.transform.GetComponent<PlayerController>().GetIsBlocking() == false) {
+                //do damage to that enemy
+                other.transform.GetComponent<Health>().DoDamage(projectileDamage);
 
-            //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
-            //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
-            other.transform.GetComponent<PlayerController>().Stagger(staggerStat);
+                //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
+                //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
+                other.transform.GetComponent<PlayerController>().Stagger(staggerStat);
+            }
 
             Destroy(gameObject);
         }
