@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     private bool isWaitingToAttack = false;
     private bool isStaggered = false;
     private bool isBlocking = false;
-    private bool startBlocking = false;
+    ///private bool startBlocking = false;
     [SerializeField]private float maxBlockTime = 1.0f;
     [SerializeField]private float blockTimer = 0;
     [SerializeField]private float timeBetweenBlocks = 0.5f;
@@ -237,7 +237,7 @@ public class PlayerController : MonoBehaviour
                     if (Input.GetKey(KeyCode.LeftShift) && currentSpeed < 0.01 && !isStaggered && !isAttacking && blockCooldown == 0)
                     {
                         //set player to blocking
-                        startBlocking = true;
+                        ///startBlocking = true;
                         anim.SetBool("isBlocking", true);
                     }
 
@@ -250,15 +250,7 @@ public class PlayerController : MonoBehaviour
                     //if left shift is released OR blockTimer has reached maxBlockTime
                     if (Input.GetKeyUp(KeyCode.LeftShift) || blockTimer > maxBlockTime)
                     {
-                        //set player to not blocking
-                        startBlocking = false;
-                        isBlocking = false;
-                        anim.SetBool("isBlocking", false);
-
-                        //reset blockTimer to 0
-                        blockTimer = 0;
-                        //set block cooldown to time between blocks
-                        blockCooldown = timeBetweenBlocks;
+                        StopBlocking();
                     }
                     #endregion
                 }
@@ -290,6 +282,21 @@ public class PlayerController : MonoBehaviour
 
     //block functions
     #region
+    //stop blocking function called in code
+    private void StopBlocking()
+    {
+        //set player to not blocking
+        ///startBlocking = false;
+        isBlocking = false;
+        anim.SetBool("isBlocking", false);
+
+        //reset blockTimer to 0
+        blockTimer = 0;
+        //set block cooldown to time between blocks
+        blockCooldown = timeBetweenBlocks;
+    }
+    
+    //used in animation for blocking
     public void Block()
     {
         //set is blocking to true and trigger the animation
@@ -301,6 +308,9 @@ public class PlayerController : MonoBehaviour
     #region
     public void Stagger(float timeToStagger)
     {
+        //set is blocking to false (so that it does not jump back to blocking after stagger animation plays through)
+        StopBlocking();
+
         //set is staggered to true and trigger the animation
         isStaggered = true;
         staggerTime = timeToStagger;
@@ -404,6 +414,18 @@ public class PlayerController : MonoBehaviour
                     //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
                     //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
                     hit.transform.GetComponent<NinjaNavMesh>().Stagger(staggerStat);
+                    //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
+                    //Debug.DrawRay(transform.position, rayDir2 * 0.4f, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+                    //Debug.DrawRay(transform.position, rayDir3 * 0.4f, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
+                }
+                else if (hit.transform.GetComponent<Boss1_4>() != null)
+                {
+                    //do damage to that enemy
+                    hit.transform.GetComponent<Health>().DoDamage(attackDamage);
+
+                    //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
+                    //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
+                    ///hit.transform.GetComponent<Boss1_4>().Stagger(staggerStat);
                     //Debug.DrawRay(transform.position, rayDir * 0.4f, Color.red, 50000);
                     //Debug.DrawRay(transform.position, rayDir2 * 0.4f, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
                     //Debug.DrawRay(transform.position, rayDir3 * 0.4f, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??

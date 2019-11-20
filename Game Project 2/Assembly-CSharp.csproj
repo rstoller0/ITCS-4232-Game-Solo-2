@@ -61,6 +61,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Camera\FollowTargetArea.cs" />
+    <Compile Include="Assets\Scripts\Control\Boss1_4.cs" />
+    <Compile Include="Assets\Scripts\Control\BossAnimationHelper.cs" />
+    <Compile Include="Assets\Scripts\Control\DaggerMovement.cs" />
     <Compile Include="Assets\Scripts\Control\DoorLock.cs" />
     <Compile Include="Assets\Scripts\Control\DragonWarriorNavMesh.cs" />
     <Compile Include="Assets\Scripts\Control\EnemyReplacement.cs" />

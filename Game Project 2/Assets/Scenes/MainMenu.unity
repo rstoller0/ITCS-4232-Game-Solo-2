@@ -7999,7 +7999,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   setMenuAsEnabled: 1
-  levelToLoad: Level1
+  levelToLoad: Level1-1
 --- !u!114 &1777726956
 MonoBehaviour:
   m_ObjectHideFlags: 0

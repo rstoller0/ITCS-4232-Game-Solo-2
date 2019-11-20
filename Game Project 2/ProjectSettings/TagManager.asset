@@ -11,6 +11,8 @@ TagManager:
   - axePickup
   - scythePickup
   - levelEnd
+  - EnemyAttackRange
+  - Item
   layers:
   - Default
   - TransparentFX
@@ -45,6 +47,12 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Boss Layers Back
+    uniqueID: 2463376089
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Boss Layers Front
+    uniqueID: 2270223895
     locked: 0

@@ -8,7 +8,7 @@ public class MenuUIManager : MonoBehaviour
     public static MenuUIManager instance;
     private Canvas menu;
     [SerializeField] private bool setMenuAsEnabled = true;
-    [SerializeField] private string levelToLoad = "Level1";
+    [SerializeField] private string levelToLoad = "Level1-1";
 
     void Awake()
     {

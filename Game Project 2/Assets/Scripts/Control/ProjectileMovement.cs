@@ -43,18 +43,19 @@ public class ProjectileMovement : MonoBehaviour
         if (other.transform.tag == "Player")
         {
             //if the player is not blocking
-            if (other.transform.GetComponent<PlayerController>().GetIsBlocking() == false) {
-                //do damage to that enemy
-                other.transform.GetComponent<Health>().DoDamage(projectileDamage);
+            ///block only works with Melee Attacks (this is not a Melee Attack)
+            ///if (other.transform.GetComponent<PlayerController>().GetIsBlocking() == false) {
+            //do damage to that enemy
+            other.transform.GetComponent<Health>().DoDamage(projectileDamage);
 
-                //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
-                //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
-                other.transform.GetComponent<PlayerController>().Stagger(staggerStat);
-            }
+            //WORK ON THIS ASPECT, MAY NEED TO ADD A ENEMY PARENT SCRIPT THAT HAS THE STAGGER VARIABLES SO CAN BE ON ALL ENEMY TYPES AND NEED TO ADD ANIMATION STUFF FOR STAGGERS
+            //ASLO HAVE NOT ADD A STAGGER ASPECT TO THE ENEMIES
+            other.transform.GetComponent<PlayerController>().Stagger(staggerStat);
+            ///}
 
             Destroy(gameObject);
         }
-        else if (other.transform.tag == "Enemy")
+        else if (other.transform.tag == "Enemy" || other.transform.tag == "EnemyProjectile" || other.transform.tag == "EnemyAttackRange" || other.transform.tag == "Item")
         {
             //else if hitting another enemy, do nothing
         }
