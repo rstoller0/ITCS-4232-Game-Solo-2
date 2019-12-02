@@ -564,7 +564,7 @@ PrefabInstance:
     - target: {fileID: 4845825640130588138, guid: 31b1060d10012a74d8a2c73df397ca0b,
         type: 3}
       propertyPath: currentScene
-      value: Level1
+      value: Level1-1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 31b1060d10012a74d8a2c73df397ca0b, type: 3}
@@ -3380,6 +3380,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   setMenuAsEnabled: 0
   levelToLoad: Level1-1
+  fromCredits: 0
 --- !u!114 &539913890
 MonoBehaviour:
   m_ObjectHideFlags: 0

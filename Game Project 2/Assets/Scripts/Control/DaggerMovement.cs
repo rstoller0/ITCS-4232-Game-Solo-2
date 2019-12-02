@@ -13,6 +13,7 @@ public class DaggerMovement : MonoBehaviour
     [Range(0, 5)] [SerializeField] private float staggerStat = 0.25f;
     private Rigidbody rb;
     private Vector3 maxRange;
+    [SerializeField] private GameObject daggerHitPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +37,8 @@ public class DaggerMovement : MonoBehaviour
 
         if (Vector3.Distance(maxRange, transform.position) < 0.1f)
         {
+            //no sound when the dagger hits nothing
+            //DestroyDagger();
             Destroy(gameObject);
         }
     }
@@ -55,7 +58,9 @@ public class DaggerMovement : MonoBehaviour
             other.transform.GetComponent<PlayerController>().Stagger(staggerStat);
             ///}
 
-            Destroy(gameObject);
+            DestroyDagger();
+
+            //Destroy(gameObject);
         }
         else if (other.transform.tag == "Enemy" || other.transform.tag == "EnemyProjectile" || other.transform.tag == "EnemyAttackRange" || other.transform.tag == "Item")
         {
@@ -63,8 +68,17 @@ public class DaggerMovement : MonoBehaviour
         }
         else
         {
+            DestroyDagger();
+
             //else hit a wall or something so destroy the projectile
-            Destroy(gameObject);
+            //Destroy(gameObject);
         }
+    }
+
+    public void DestroyDagger()
+    {
+        //spawn the explosion sound right before destroying the object
+        GameObject dagger_hit = Instantiate(daggerHitPrefab, transform.position, Quaternion.LookRotation(transform.forward)) as GameObject;
+        Destroy(gameObject);
     }
 }

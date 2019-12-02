@@ -9,6 +9,7 @@ public class MenuUIManager : MonoBehaviour
     private Canvas menu;
     [SerializeField] private bool setMenuAsEnabled = true;
     [SerializeField] private string levelToLoad = "Level1-1";
+    public bool fromCredits = false;
 
     void Awake()
     {
@@ -31,7 +32,16 @@ public class MenuUIManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && !menu.enabled && SceneManager.GetActiveScene().name != "MainMenu")
+        if (SceneManager.GetActiveScene().name == "MainMenu" && fromCredits)
+        {
+            menu.enabled = true;
+            GameManager.instance.isPaused = false;
+            Time.timeScale = 1;
+
+            fromCredits = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape) && !menu.enabled && SceneManager.GetActiveScene().name != "MainMenu" && SceneManager.GetActiveScene().name != "Credits")
         {
             //set the pause menu to enabled
             menu.enabled = true;

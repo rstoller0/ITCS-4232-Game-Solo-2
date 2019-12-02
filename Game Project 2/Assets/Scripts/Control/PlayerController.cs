@@ -40,6 +40,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]private float timeBetweenBlocks = 0.5f;
     [SerializeField]private float blockCooldown = 0;
     private Health healthScript;
+    [SerializeField] private float timeBetweenWeaponSwaps;
+    private float weaponSwapCooldown = 0;
     [SerializeField] private bool axeAquired = false;
     [SerializeField] private bool scytheAquired = false;
     private bool hasSword = true;
@@ -61,6 +63,13 @@ public class PlayerController : MonoBehaviour
 
     //variable for movement inputs
     Vector3 axisInputs;
+
+    //audio variables
+    [SerializeField] private AudioSource footstepsAudioSource;
+    [SerializeField] private AudioClip swordHitClip;
+    [SerializeField] private AudioClip axeHitClip;
+    [SerializeField] private AudioClip scytheHitClip;
+    [SerializeField] private AudioSource hitAudioSource;
 
     public bool GetIsBlocking()
     {
@@ -96,6 +105,13 @@ public class PlayerController : MonoBehaviour
                 attackCooldown = Mathf.Max(attackCooldown - Time.deltaTime, 0);
             }
 
+            //if just swapped weapons (time is greater than 0)
+            if (weaponSwapCooldown > 0)
+            {
+                //if the weapon swap cooldown is still above 0 count down
+                weaponSwapCooldown = Mathf.Max(weaponSwapCooldown - Time.deltaTime, 0);
+            }
+
             //if health is not 0 (player is not dead), then allow movement and control of character
             if (healthScript.GetHealth() > 0)
             {
@@ -128,6 +144,19 @@ public class PlayerController : MonoBehaviour
                     //update animator's speed variable to currentSpeed
                     anim.SetFloat("speed", currentSpeed);
 
+                    //Debug.Log("currentSpeed: " + currentSpeed);
+
+                    if (currentSpeed > 0.1f)
+                    {
+                        //if currently walking, then play the footsteps audio
+                        //footstepsAudioSource.volume = 0.25f;
+                    }
+                    else
+                    {
+                        //else note currently walking, stop the footsteps audio
+                        //footstepsAudioSource.volume = 0;
+                    }
+
                     //sprite direction determination
                     #region
                     //if moving right
@@ -147,9 +176,9 @@ public class PlayerController : MonoBehaviour
 
                     //combat code
                     #region
-                    //if Q key is pressed, swap weapons
+                    //if Q key is pressed AND swap cooldown is 0 AND not attacking AND not blocking, swap weapons
                     #region
-                    if (Input.GetKeyDown(KeyCode.Q) && !isAttacking && !isBlocking)
+                    if (Input.GetKeyDown(KeyCode.Q) && weaponSwapCooldown == 0 && !isAttacking && !isBlocking)
                     {
                         if (axeAquired)
                         {
@@ -164,6 +193,7 @@ public class PlayerController : MonoBehaviour
                                     attackDamage = axeDamage;
                                     timeBetweenAttacks = axeCooldown;
                                     staggerStat = axeStaggerStat;
+                                    hitAudioSource.clip = axeHitClip;
                                     hasScythe = false;
                                 }
                                 else if (hasAxe)
@@ -174,6 +204,7 @@ public class PlayerController : MonoBehaviour
                                     attackDamage = scytheDamage;
                                     timeBetweenAttacks = scytheCooldown;
                                     staggerStat = scytheStaggerStat;
+                                    hitAudioSource.clip = scytheHitClip;
                                 }
                                 else
                                 {
@@ -181,6 +212,7 @@ public class PlayerController : MonoBehaviour
                                     attackDamage = swordDamage;
                                     timeBetweenAttacks = swordCooldown;
                                     staggerStat = swordStaggerStat;
+                                    hitAudioSource.clip = swordHitClip;
                                     hasAxe = false;
                                     hasScythe = false;
                                 }
@@ -195,6 +227,7 @@ public class PlayerController : MonoBehaviour
                                     attackDamage = axeDamage;
                                     timeBetweenAttacks = axeCooldown;
                                     staggerStat = axeStaggerStat;
+                                    hitAudioSource.clip = axeHitClip;
                                     hasScythe = false;
                                 }
                                 else
@@ -203,6 +236,7 @@ public class PlayerController : MonoBehaviour
                                     attackDamage = swordDamage;
                                     timeBetweenAttacks = swordCooldown;
                                     staggerStat = swordStaggerStat;
+                                    hitAudioSource.clip = swordHitClip;
                                     hasAxe = false;
                                     hasScythe = false;
                                 }
@@ -213,6 +247,9 @@ public class PlayerController : MonoBehaviour
                         anim.SetBool("hasSword", hasSword);
                         anim.SetBool("hasAxe", hasAxe);
                         anim.SetBool("hasScythe", hasScythe);
+
+                        //set weapon swap cooldown
+                        weaponSwapCooldown = timeBetweenWeaponSwaps;
                     }
                     #endregion
 
@@ -263,6 +300,11 @@ public class PlayerController : MonoBehaviour
 
             //END OF UPDATE [INSIDE if (!GameManager.instance.isPaused)]
         }
+    }
+
+    public void Step()
+    {
+        footstepsAudioSource.Play();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -389,6 +431,8 @@ public class PlayerController : MonoBehaviour
         //hits2 = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir2, attackRange, layerMask1); //IF I WANT TO ADD MORE HIT WIDTH
         //hits3 = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), rayDir3, attackRange, layerMask1); //IF I WANT TO ADD MORE HIT WIDTH
 
+        bool hitAnEnemy = false;
+
         //can hit multiple enemies at once
         foreach (RaycastHit hit in hits)
         {
@@ -430,13 +474,38 @@ public class PlayerController : MonoBehaviour
                     //Debug.DrawRay(transform.position, rayDir2 * 0.4f, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
                     //Debug.DrawRay(transform.position, rayDir3 * 0.4f, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
                 }
+
+                //set enemy hit so it will only play the hit sounds once
+                hitAnEnemy = true;
             }
             else if (hit.transform.tag == "EnemyProjectile")
             {
                 //Debug.Log("Hit Projectile");
+
+                if (hit.transform.GetComponent<ProjectileMovement>() != null)
+                {
+                    //destry enemy projectile
+                    hit.transform.GetComponent<ProjectileMovement>().DestroyFireball();
+                }
+                else if (hit.transform.GetComponent<DaggerMovement>() != null)
+                {
+                    //destry enemy projectile
+                    hit.transform.GetComponent<DaggerMovement>().DestroyDagger();
+                }
+
                 //destroy enemy projectile
-                Destroy(hit.transform.gameObject);
+                //Destroy(hit.transform.gameObject);
             }
+        }
+
+        if (hitAnEnemy)
+        {
+            //play hit sound
+            hitAudioSource.Play();
+        }
+        else
+        {
+            //play miss sound [IF I WANT TO IMPLEMENT A MISS SOUND]
         }
         #endregion
     }

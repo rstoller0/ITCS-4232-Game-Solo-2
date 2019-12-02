@@ -42,6 +42,10 @@ public class NinjaNavMesh : MonoBehaviour
     //variable for desired location for the ninja to move to
     private Vector3 targetVector;
 
+    //audio variables
+    [SerializeField] private AudioSource footstepsAudioSource;
+    [SerializeField] private AudioSource hitAudioSource;
+
     private void Start()
     {
         //get the nav mesh agent at start and store it in the variable
@@ -170,6 +174,11 @@ public class NinjaNavMesh : MonoBehaviour
             //OPTION 2
             Destroy(this.gameObject);
         }
+    }
+
+    public void Step()
+    {
+        footstepsAudioSource.Play();
     }
 
     //movement functions (update animator speed function)
@@ -307,6 +316,9 @@ public class NinjaNavMesh : MonoBehaviour
                     //Debug.DrawRay(transform.position, rayDir2 * attackRange, Color.green, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
                     //Debug.DrawRay(transform.position, rayDir3 * attackRange, Color.blue, 50000); //IF I WANT TO ADD MORE HIT WIDTH??
                 }
+
+                //there will only ever be 1 player, so can call it here
+                hitAudioSource.Play();
             }
         }
         #endregion

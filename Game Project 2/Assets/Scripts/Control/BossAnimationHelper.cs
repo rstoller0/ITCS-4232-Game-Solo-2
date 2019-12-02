@@ -6,6 +6,11 @@ public class BossAnimationHelper : MonoBehaviour
 {
     [SerializeField] private Boss1_4 bossScript;
 
+    public void Step()
+    {
+        bossScript.Step();
+    }
+
     public void SetPhase(int phaseChange)
     {
         bossScript.SetPhase(phaseChange);

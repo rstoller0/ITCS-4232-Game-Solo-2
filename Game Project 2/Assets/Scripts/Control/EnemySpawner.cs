@@ -4,12 +4,23 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject[] gameObjects;
+    [SerializeField] private GameObject[] ninjas;
+    [SerializeField] private GameObject[] dragonWarriors;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        foreach (GameObject ninja in ninjas)
+        {
+            ninja.GetComponentInChildren<SpriteRenderer>().enabled = false;
+            ninja.GetComponent<NinjaNavMesh>().enabled = false;
+        }
+
+        foreach (GameObject dragonWarrior in dragonWarriors)
+        {
+            dragonWarrior.GetComponentInChildren<SpriteRenderer>().enabled = false;
+            dragonWarrior.GetComponent<DragonWarriorNavMesh>().enabled = false;
+        }
     }
 
     // Update is called once per frame
@@ -22,9 +33,16 @@ public class EnemySpawner : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            foreach (GameObject go in gameObjects)
+            foreach (GameObject ninja in ninjas)
             {
-                go.SetActive(true);
+                ninja.GetComponentInChildren<SpriteRenderer>().enabled = true;
+                ninja.GetComponent<NinjaNavMesh>().enabled = true;
+            }
+
+            foreach (GameObject dragonWarrior in dragonWarriors)
+            {
+                dragonWarrior.GetComponentInChildren<SpriteRenderer>().enabled = true;
+                dragonWarrior.GetComponent<DragonWarriorNavMesh>().enabled = true;
             }
 
             Destroy(gameObject);

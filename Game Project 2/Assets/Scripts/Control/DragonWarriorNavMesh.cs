@@ -45,6 +45,9 @@ public class DragonWarriorNavMesh : MonoBehaviour
     //variable for desired location for the ninja to move to
     private Vector3 targetVector;
 
+    //audio variables
+    [SerializeField] private AudioSource footstepsAudioSource;
+
     private void Start()
     {
         //get the nav mesh agent at start and store it in the variable
@@ -176,6 +179,11 @@ public class DragonWarriorNavMesh : MonoBehaviour
             //OPTION 2
             Destroy(this.gameObject);
         }
+    }
+
+    public void Step()
+    {
+        footstepsAudioSource.Play();
     }
 
     //movement functions (update animator speed function)

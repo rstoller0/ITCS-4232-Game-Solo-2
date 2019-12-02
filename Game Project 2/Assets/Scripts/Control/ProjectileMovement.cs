@@ -12,6 +12,8 @@ public class ProjectileMovement : MonoBehaviour
     [Range(0, 5)] [SerializeField] private float staggerStat = 0.25f;
     private Rigidbody rb;
     private Vector3 maxRange;
+    [SerializeField] private GameObject fireballExplosionPrefab;
+
 
     // Start is called before the first frame update
     void Start()
@@ -34,7 +36,8 @@ public class ProjectileMovement : MonoBehaviour
 
         if (Vector3.Distance(maxRange, transform.position) < 0.1f)
         {
-            Destroy(gameObject);
+            DestroyFireball();
+            //Destroy(gameObject);
         }
     }
 
@@ -53,7 +56,12 @@ public class ProjectileMovement : MonoBehaviour
             other.transform.GetComponent<PlayerController>().Stagger(staggerStat);
             ///}
 
-            Destroy(gameObject);
+            DestroyFireball();
+            
+            //spawn the explosion sound right before destroying the object
+            //GameObject fireball_explosion = Instantiate(fireballExplosionPrefab, transform.position, Quaternion.LookRotation(transform.forward)) as GameObject;
+
+            //Destroy(gameObject);
         }
         else if (other.transform.tag == "Enemy" || other.transform.tag == "EnemyProjectile" || other.transform.tag == "EnemyAttackRange" || other.transform.tag == "Item")
         {
@@ -62,7 +70,20 @@ public class ProjectileMovement : MonoBehaviour
         else
         {
             //else hit a wall or something so destroy the projectile
-            Destroy(gameObject);
+            DestroyFireball();
+
+            //spawn the explosion sound right before destroying the object
+            //GameObject fireball_explosion = Instantiate(fireballExplosionPrefab, transform.position, Quaternion.LookRotation(transform.forward)) as GameObject;
+
+            //else hit a wall or something so destroy the projectile
+            //Destroy(gameObject);
         }
+    }
+
+    public void DestroyFireball()
+    {
+        //spawn the explosion sound right before destroying the object
+        GameObject fireball_explosion = Instantiate(fireballExplosionPrefab, transform.position, Quaternion.LookRotation(transform.forward)) as GameObject;
+        Destroy(gameObject);
     }
 }

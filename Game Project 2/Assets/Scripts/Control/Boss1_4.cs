@@ -46,6 +46,12 @@ public class Boss1_4 : MonoBehaviour
     //variable for desired location for the ninja to move to
     private Vector3 targetVector;
 
+    //audio variables
+    [SerializeField] private AudioSource footstepsAudioSource;
+    [SerializeField] private AudioClip daggerSwipeClip;
+    [SerializeField] private AudioClip daggerPoundClip;
+    [SerializeField] private AudioSource hitAudioSource;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -208,6 +214,11 @@ public class Boss1_4 : MonoBehaviour
         }
     }
 
+    public void Step()
+    {
+        footstepsAudioSource.Play();
+    }
+
     //movement functions (update animator speed function)
     #region
     private void UpdateAnimator()
@@ -259,6 +270,8 @@ public class Boss1_4 : MonoBehaviour
         //if player is in damage range and not blocking (this is the only blockable attack)
         if (playerInDamageRange && target.GetComponent<PlayerController>().GetIsBlocking() == false)
         {
+            hitAudioSource.clip = daggerSwipeClip;
+            hitAudioSource.Play();
             target.GetComponent<Health>().DoDamage(daggerSwipeDamage);
             target.GetComponent<PlayerController>().Stagger(staggerTime);
         }
@@ -273,6 +286,8 @@ public class Boss1_4 : MonoBehaviour
         //if player is in damage range (this attack is not blockable)
         if (playerInDamageRange)
         {
+            hitAudioSource.clip = daggerPoundClip;
+            hitAudioSource.Play();
             target.GetComponent<Health>().DoDamage(daggerPoundDamage);
             target.GetComponent<PlayerController>().Stagger(staggerTime);
         }

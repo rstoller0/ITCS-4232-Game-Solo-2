@@ -64,6 +64,7 @@
     <Compile Include="Assets\Scripts\Control\Boss1_4.cs" />
     <Compile Include="Assets\Scripts\Control\BossAnimationHelper.cs" />
     <Compile Include="Assets\Scripts\Control\DaggerMovement.cs" />
+    <Compile Include="Assets\Scripts\Control\DestroyAfter.cs" />
     <Compile Include="Assets\Scripts\Control\DoorLock.cs" />
     <Compile Include="Assets\Scripts\Control\DragonWarriorNavMesh.cs" />
     <Compile Include="Assets\Scripts\Control\EnemyReplacement.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Assets\Scripts\Trashed (Previous Versions)\SkeletonController.cs" />
     <Compile Include="Assets\Scripts\Trashed (Previous Versions)\SkeletonControllerType2.cs" />
     <Compile Include="Assets\Scripts\UI\BackgroundMusicScript.cs" />
+    <Compile Include="Assets\Scripts\UI\CreditsManager.cs" />
     <Compile Include="Assets\Scripts\UI\EnemyHealthManager.cs" />
     <Compile Include="Assets\Scripts\UI\GameManager.cs" />
     <Compile Include="Assets\Scripts\UI\HUDManager.cs" />

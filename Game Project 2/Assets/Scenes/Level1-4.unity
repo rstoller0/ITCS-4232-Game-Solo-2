@@ -474,7 +474,7 @@ PrefabInstance:
     - target: {fileID: 4845825640130588138, guid: 31b1060d10012a74d8a2c73df397ca0b,
         type: 3}
       propertyPath: currentScene
-      value: Level3
+      value: Level1-4
       objectReference: {fileID: 0}
     - target: {fileID: 4845825640130588138, guid: 31b1060d10012a74d8a2c73df397ca0b,
         type: 3}
@@ -3197,6 +3197,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   setMenuAsEnabled: 0
   levelToLoad: Level1-1
+  fromCredits: 0
 --- !u!114 &539913890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14444,7 +14445,7 @@ PrefabInstance:
     - target: {fileID: 1438881875137654153, guid: 4346b0e116608fb4b9a40018b40d2f05,
         type: 3}
       propertyPath: levelName
-      value: Sandbox
+      value: Credits
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4346b0e116608fb4b9a40018b40d2f05, type: 3}

@@ -474,7 +474,7 @@ PrefabInstance:
     - target: {fileID: 4845825640130588138, guid: 31b1060d10012a74d8a2c73df397ca0b,
         type: 3}
       propertyPath: currentScene
-      value: Level3
+      value: Level1-3
       objectReference: {fileID: 0}
     - target: {fileID: 4845825640130588138, guid: 31b1060d10012a74d8a2c73df397ca0b,
         type: 3}
@@ -1448,12 +1448,12 @@ PrefabInstance:
     - target: {fileID: 1066091756168603471, guid: af6043bc04f597d4c85c6c15c04ef1dc,
         type: 3}
       propertyPath: m_Name
-      value: Dragon_Warrior (2)
+      value: Dragon_Warrior (2) [Replaces]
       objectReference: {fileID: 0}
     - target: {fileID: 1066091756168603471, guid: af6043bc04f597d4c85c6c15c04ef1dc,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1066091756168603476, guid: af6043bc04f597d4c85c6c15c04ef1dc,
         type: 3}
@@ -3480,6 +3480,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   setMenuAsEnabled: 0
   levelToLoad: Level1-1
+  fromCredits: 0
 --- !u!114 &539913890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3750,12 +3751,12 @@ PrefabInstance:
     - target: {fileID: 1066091756168603471, guid: af6043bc04f597d4c85c6c15c04ef1dc,
         type: 3}
       propertyPath: m_Name
-      value: Dragon_Warrior (3)
+      value: Dragon_Warrior (3) [Spawns]
       objectReference: {fileID: 0}
     - target: {fileID: 1066091756168603471, guid: af6043bc04f597d4c85c6c15c04ef1dc,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1066091756168603476, guid: af6043bc04f597d4c85c6c15c04ef1dc,
         type: 3}
@@ -4730,12 +4731,12 @@ PrefabInstance:
     - target: {fileID: 7533235320218759538, guid: 77a7ef2e8176105479b30d15937e6ff8,
         type: 3}
       propertyPath: m_Name
-      value: Ninja (1)
+      value: Ninja (1) [Spawns]
       objectReference: {fileID: 0}
     - target: {fileID: 7533235320218759538, guid: 77a7ef2e8176105479b30d15937e6ff8,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7533235320218759529, guid: 77a7ef2e8176105479b30d15937e6ff8,
         type: 3}
@@ -7191,9 +7192,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ce32161f9d239e408c768f893b4a3c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameObjects:
+  ninjas:
   - {fileID: 689464828}
   - {fileID: 1197606173}
+  dragonWarriors:
   - {fileID: 557802317}
 --- !u!65 &971043860
 BoxCollider:
@@ -9248,12 +9250,12 @@ PrefabInstance:
     - target: {fileID: 7533235320218759538, guid: 77a7ef2e8176105479b30d15937e6ff8,
         type: 3}
       propertyPath: m_Name
-      value: Ninja (2)
+      value: Ninja (2) [Spawns]
       objectReference: {fileID: 0}
     - target: {fileID: 7533235320218759538, guid: 77a7ef2e8176105479b30d15937e6ff8,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7533235320218759529, guid: 77a7ef2e8176105479b30d15937e6ff8,
         type: 3}
@@ -10249,12 +10251,12 @@ PrefabInstance:
     - target: {fileID: 7533235320218759538, guid: 77a7ef2e8176105479b30d15937e6ff8,
         type: 3}
       propertyPath: m_Name
-      value: Ninja (3)
+      value: Ninja (3) [Replaces]
       objectReference: {fileID: 0}
     - target: {fileID: 7533235320218759538, guid: 77a7ef2e8176105479b30d15937e6ff8,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7533235320218759529, guid: 77a7ef2e8176105479b30d15937e6ff8,
         type: 3}
@@ -13373,12 +13375,12 @@ PrefabInstance:
     - target: {fileID: 1066091756168603471, guid: af6043bc04f597d4c85c6c15c04ef1dc,
         type: 3}
       propertyPath: m_Name
-      value: Dragon_Warrior (3)
+      value: Dragon_Warrior (3) [Replaces]
       objectReference: {fileID: 0}
     - target: {fileID: 1066091756168603471, guid: af6043bc04f597d4c85c6c15c04ef1dc,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1066091756168603476, guid: af6043bc04f597d4c85c6c15c04ef1dc,
         type: 3}
@@ -13469,12 +13471,12 @@ PrefabInstance:
     - target: {fileID: 7533235320218759538, guid: 77a7ef2e8176105479b30d15937e6ff8,
         type: 3}
       propertyPath: m_Name
-      value: Ninja (2)
+      value: Ninja (2) [Replaces]
       objectReference: {fileID: 0}
     - target: {fileID: 7533235320218759538, guid: 77a7ef2e8176105479b30d15937e6ff8,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7533235320218759529, guid: 77a7ef2e8176105479b30d15937e6ff8,
         type: 3}
@@ -13885,9 +13887,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dyingEnemy: {fileID: 173317963}
-  gameObjects:
+  ninjas:
   - {fileID: 1776868116}
   - {fileID: 1301031490}
+  dragonWarriors:
   - {fileID: 171732592}
   - {fileID: 1768903238}
 --- !u!1 &1848861814
