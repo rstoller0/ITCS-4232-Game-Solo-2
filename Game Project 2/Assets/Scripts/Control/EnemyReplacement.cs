@@ -15,12 +15,14 @@ public class EnemyReplacement : MonoBehaviour
         {
             ninja.GetComponentInChildren<SpriteRenderer>().enabled = false;
             ninja.GetComponent<NinjaNavMesh>().enabled = false;
+            ninja.GetComponent<Collider>().enabled = false;
         }
 
         foreach (GameObject dragonWarrior in dragonWarriors)
         {
             dragonWarrior.GetComponentInChildren<SpriteRenderer>().enabled = false;
             dragonWarrior.GetComponent<DragonWarriorNavMesh>().enabled = false;
+            dragonWarrior.GetComponent<Collider>().enabled = false;
         }
     }
 
@@ -33,12 +35,14 @@ public class EnemyReplacement : MonoBehaviour
             {
                 ninja.GetComponentInChildren<SpriteRenderer>().enabled = true;
                 ninja.GetComponent<NinjaNavMesh>().enabled = true;
+                ninja.GetComponent<Collider>().enabled = true;
             }
 
             foreach (GameObject dragonWarrior in dragonWarriors)
             {
                 dragonWarrior.GetComponentInChildren<SpriteRenderer>().enabled = true;
                 dragonWarrior.GetComponent<DragonWarriorNavMesh>().enabled = true;
+                dragonWarrior.GetComponent<Collider>().enabled = true;
             }
 
             Destroy(gameObject);
