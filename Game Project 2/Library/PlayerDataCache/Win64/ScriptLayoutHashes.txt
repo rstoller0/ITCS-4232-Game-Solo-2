@@ -1,6 +1,6 @@
 Win64
 PlayerPath?
-D:/darkn/School/UNCC/2019-20/Fall/ITCS-4232 Game Design & Development Studio/ITCS-4232-Game-Solo-2/Game Project 2/Builds/Version0.1/A Knight's Walk.exe
+D:/darkn/School/UNCC/2019-20/Fall/ITCS-4232 Game Design & Development Studio/ITCS-4232-Game-Solo-2/Game Project 2/Builds/Version0.2/A Knight's Walk.exe
 SceneListBegin?
 Assets/Scenes/MainMenu.unity
 Assets/Scenes/Level1-1.unity
