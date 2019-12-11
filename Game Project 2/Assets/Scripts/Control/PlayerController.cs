@@ -16,8 +16,8 @@ public class PlayerController : MonoBehaviour
     //range/combat variables
     [SerializeField] private float attackRange = 0.55f;
     [SerializeField] private float attackDamage = 25;
-    private float swordDamage = 22.5f;
-    private float axeDamage = 45;
+    private float swordDamage = 20;
+    private float axeDamage = 35;
     private float scytheDamage = 15;
     [Tooltip("Time between attacks (Lower means faster attack speed)")]
     [Range(0, 5)] [SerializeField] private float timeBetweenAttacks = 1.35f;

@@ -1197,6 +1197,18 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &142128957 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2307456311699632510, guid: 64eab6c27d481c346a5c9d95b1dd89bb,
+    type: 3}
+  m_PrefabInstance: {fileID: 1030243897}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &144927655
 GameObject:
   m_ObjectHideFlags: 0
@@ -1564,6 +1576,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &230922977 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2307456310959535270, guid: 64eab6c27d481c346a5c9d95b1dd89bb,
+    type: 3}
+  m_PrefabInstance: {fileID: 1030243897}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &231833659
 GameObject:
   m_ObjectHideFlags: 0
@@ -2246,8 +2270,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioMixer: {fileID: 24100000, guid: 30bba83b3837f8842abc719537d2d3ea, type: 2}
-  musicSlider: {fileID: 0}
-  sfxSlider: {fileID: 0}
+  musicSlider: {fileID: 230922977}
+  sfxSlider: {fileID: 142128957}
 --- !u!82 &382854237
 AudioSource:
   m_ObjectHideFlags: 0
@@ -7132,6 +7156,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Menu_Canvas (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2307456310959535270, guid: 64eab6c27d481c346a5c9d95b1dd89bb,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 382854236}
+    - target: {fileID: 2307456310959535270, guid: 64eab6c27d481c346a5c9d95b1dd89bb,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetMusicVolume
+      objectReference: {fileID: 0}
+    - target: {fileID: 2307456311699632510, guid: 64eab6c27d481c346a5c9d95b1dd89bb,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 382854236}
+    - target: {fileID: 2307456311699632510, guid: 64eab6c27d481c346a5c9d95b1dd89bb,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetSfxVolume
       objectReference: {fileID: 0}
     - target: {fileID: 2307456312105265881, guid: 64eab6c27d481c346a5c9d95b1dd89bb,
         type: 3}
