@@ -16,20 +16,20 @@ public class PlayerController : MonoBehaviour
     //range/combat variables
     [SerializeField] private float attackRange = 0.55f;
     [SerializeField] private float attackDamage = 25;
-    private float swordDamage = 25;
-    private float axeDamage = 35;
+    private float swordDamage = 22.5f;
+    private float axeDamage = 45;
     private float scytheDamage = 15;
     [Tooltip("Time between attacks (Lower means faster attack speed)")]
     [Range(0, 5)] [SerializeField] private float timeBetweenAttacks = 1.35f;
     private float attackCooldown = 0;
     private float swordCooldown = 1.5f;
-    private float axeCooldown = 2f;
-    private float scytheCooldown = 1f;
+    private float axeCooldown = 1.5f;
+    private float scytheCooldown = 1.5f;
     [Tooltip("Time enemy will be staggered (i.e. not able to attack after being hit)")]
     [Range(0, 5)] [SerializeField] private float staggerStat = 0.25f;
-    private float swordStaggerStat = 0.25f;
+    private float swordStaggerStat = 0.15f;
     private float axeStaggerStat = 0.35f;
-    private float scytheStaggerStat = 0.15f;
+    private float scytheStaggerStat = 0.05f;
     private bool isAttacking = false;
     private bool isWaitingToAttack = false;
     private bool isStaggered = false;
@@ -47,6 +47,9 @@ public class PlayerController : MonoBehaviour
     private bool hasSword = true;
     private bool hasAxe = false;
     private bool hasScythe = false;
+    private int attackChain = 0;
+    private float attackChainTimer = 0;
+    private float attackChainLossTime = 1.3f;
 
     //stagger time variable to be changed by attackers weapon stats
     private float staggerTime = 0.25f;
@@ -89,6 +92,9 @@ public class PlayerController : MonoBehaviour
 
         //get ninja's health script at start
         healthScript = GetComponent<Health>();
+
+        //start with sword stagger stat
+        staggerStat = swordStaggerStat;
     }
 
     private void Update()
@@ -253,13 +259,55 @@ public class PlayerController : MonoBehaviour
                     }
                     #endregion
 
+                    //attack chain code
+                    #region
+                    //if in an attack chain, add time to timer
+                    if (attackChain != 0)
+                    {
+                        Debug.Log("attackChainTimer: " + attackChainTimer);
+                        attackChainTimer += Time.deltaTime;
+                    }
+
+                    if (attackChainTimer > attackChainLossTime)
+                    {
+                        attackChain = 0;
+                        attackChainTimer = 0;
+                    }
+                    #endregion
+
                     //if (left mouse button OR Spacebar key is pressed) AND player is able to attack again (cooldown is at 0)
-                    if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) && attackCooldown == 0 && !isBlocking)
+                    if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) && !isAttacking && attackCooldown == 0 && !isBlocking)
                     {
                         //set is attacking to true
                         isAttacking = true;
-                        //set attack cooldown
-                        attackCooldown = timeBetweenAttacks;
+
+                        //cooldown stuff for different weapons
+                        if(hasAxe)
+                        {
+                            //set attack cooldown
+                            attackCooldown = timeBetweenAttacks;
+                        }
+                        else if(hasSword)
+                        {
+                            attackChain += 1;
+                            attackChainTimer = 0;
+                            if (attackChain >= 2)
+                            {
+                                //set attack cooldown
+                                attackCooldown = timeBetweenAttacks;
+                            }
+                        }
+                        else if (hasScythe)
+                        {
+                            attackChain += 1;
+                            attackChainTimer = 0;
+                            if (attackChain >= 3)
+                            {
+                                //set attack cooldown
+                                attackCooldown = timeBetweenAttacks;
+                            }
+                        }
+                        
                         //set attack trigger in animator to true
                         anim.SetTrigger("attack");
                     }

@@ -268,12 +268,16 @@ public class Boss1_4 : MonoBehaviour
     {
         //dagger swipe function from Attack 3 animation
         //if player is in damage range and not blocking (this is the only blockable attack)
-        if (playerInDamageRange && target.GetComponent<PlayerController>().GetIsBlocking() == false)
+        if (playerInDamageRange)
         {
+            //play sound regardless of if player is blocking or not
             hitAudioSource.clip = daggerSwipeClip;
             hitAudioSource.Play();
-            target.GetComponent<Health>().DoDamage(daggerSwipeDamage);
-            target.GetComponent<PlayerController>().Stagger(staggerTime);
+            if (target.GetComponent<PlayerController>().GetIsBlocking() == false)
+            {
+                target.GetComponent<Health>().DoDamage(daggerSwipeDamage);
+                target.GetComponent<PlayerController>().Stagger(staggerTime);
+            }
         }
     }
     #endregion
