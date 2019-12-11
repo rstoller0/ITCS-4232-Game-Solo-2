@@ -93,7 +93,8 @@ public class PlayerController : MonoBehaviour
         //get ninja's health script at start
         healthScript = GetComponent<Health>();
 
-        //start with sword stagger stat
+        //start with sword attack and stagger stat
+        attackDamage = swordDamage;
         staggerStat = swordStaggerStat;
     }
 
