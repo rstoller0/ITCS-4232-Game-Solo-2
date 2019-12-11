@@ -184,8 +184,8 @@ MonoBehaviour:
     y: 0
     width: 275
     height: 597
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 202, y: 224}
+  m_MaxSize: {x: 4002, y: 4024}
   m_ActualView: {fileID: 13}
   m_Panes:
   - {fileID: 13}
@@ -386,7 +386,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: e6c7ffff04c8ffff66c9ffff28ccfffff0d0ffffecd3ffff14d6ffff24d6ffffc2d6ffff0ad9ffff2cd9ffff02dcffffcae0ffffcae3ffffd0e5ffff40e9ffffa8eeffff4cf3ffff4ef5ffff9cfbffff
+      m_ExpandedIDs: 90b5ffffaeb5ffff64b8ffff7abcffff96c2ffffe6c6ffff64caffff74caffff30ccffff5acfffffded5ffffaedeffffc8e9ffff78f6ffff9cfbffff34380000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -444,7 +444,7 @@ MonoBehaviour:
   m_Position:
     m_Target: {x: 1031.1, y: 23.333328, z: 0}
     speed: 2
-    m_Value: {x: 1031.1, y: 23.333328, z: 0}
+    m_Value: {x: 605.5, y: 280, z: 0}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -478,7 +478,7 @@ MonoBehaviour:
   m_Size:
     m_Target: 333.3806
     speed: 2
-    m_Value: 333.3806
+    m_Value: 2201.4495
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -565,10 +565,10 @@ MonoBehaviour:
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 75}
+    scrollPos: {x: 0, y: 107}
     m_SelectedIDs: 262c0000
     m_LastClickedID: 11302
-    m_ExpandedIDs: 0000000028270000262c0000142d00009a2e00001e34000052340000583400005235000000ca9a3b
+    m_ExpandedIDs: 000000002827000032270000142d00009c2e000020340000543400005a3400005435000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -596,7 +596,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000028270000c4290000142d00009a2e00001e340000523400005834000052350000
+    m_ExpandedIDs: 0000000028270000262c0000142d00009c2e000020340000543400005a34000054350000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -640,7 +640,7 @@ MonoBehaviour:
       m_IsRenaming: 0
       m_OriginalEventType: 11
       m_IsRenamingFilename: 1
-      m_ClientGUIView: {fileID: 9}
+      m_ClientGUIView: {fileID: 10}
     m_CreateAssetUtility:
       m_EndAction: {fileID: 0}
       m_InstanceID: 0
